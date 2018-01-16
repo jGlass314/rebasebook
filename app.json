@@ -1,20 +1,21 @@
 {
-  "name": "karms_facebook",
+  "name": "therebasebook",
   "scripts": {
   },
   "env": {
+    "DATABASE_URL": {
+      "required": true
+    }
   },
   "formation": {
     "web": {
       "quantity": 1
     }
   },
-  "addons": [
-
-  ],
+  "addons": [],
   "buildpacks": [
     {
-      "url": "heroku/nodejs/"
+      "url": "heroku/nodejs"
     }
   ]
 }

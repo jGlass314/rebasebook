@@ -202,7 +202,7 @@ app.get('/:username/profile/:user', function(req, res) {
 
 // Get info about single user to load their profile
 app.get('/:username', (req, res) => {
-  // console.log('inside get username');
+  console.log('inside get username');
   var username = req.params.username;
   if (username !== 'favicon.ico') {
     db.getUser(username, (err, data) => {
