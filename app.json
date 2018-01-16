@@ -12,9 +12,7 @@
       "quantity": 1
     }
   },
-  "addons": [
-    "heroku-postgresql:hobby-basic"
-  ],
+  "addons": [],
   "buildpacks": [
     {
       "url": "heroku/nodejs"
