@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS fb_database;
-CREATE DATABASE fb_database;
+DROP DATABASE IF EXISTS therebasebook;
+CREATE DATABASE therebasebook;
 
-\c fb_database;
+\c therebasebook;
 
 -- SERIAL- adds not null constraint, should increment by 1 for each new entry
 CREATE TABLE users (
