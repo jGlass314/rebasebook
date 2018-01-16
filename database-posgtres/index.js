@@ -1,9 +1,10 @@
 const { Client } = require('pg');
 console.log('Initializing client');
-console.log('This is the database url', process.env.DATABASE_URL);
+let databaseUrl =  process.env.DATABASE_URL || 'postgres://localhost/therebasebook';
 const client = new Client({
-  connectionString: process.env.DATABASE_URL || 'postgres://matt@localhost:5432/fb_database'
+  connectionString: databaseUrl
 });
+console.log('Database URL at: ', databaseUrl);
 
 client.connect();
 module.exports = {

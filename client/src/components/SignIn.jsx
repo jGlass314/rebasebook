@@ -33,6 +33,7 @@ class SignIn extends React.Component {
       newUser: true
     })
   }
+  
   handleLogIn(e) {
     e.preventDefault();
     if (!this.state.username) {
