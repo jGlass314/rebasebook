@@ -1,6 +1,8 @@
 const { Client } = require('pg');
+require('dotenv').config();
+
 console.log('Initializing client');
-let databaseUrl =  process.env.DATABASE_URL || 'postgres://localhost/therebasebook';
+let databaseUrl =  process.env.DATABASE_URL;
 const client = new Client({
   connectionString: databaseUrl
 });
