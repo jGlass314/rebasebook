@@ -39,6 +39,6 @@
     "semantic-ui-react": "^0.77.2",
     "socket.io": "^2.0.4",
     "underscore": "^1.8.3",
-    "webpack": "^2.2.1",
+    "webpack": "^2.2.1"
   }
 }
