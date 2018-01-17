@@ -23,7 +23,6 @@ class SearchBar extends Component {
 
   componentDidMount() {
     this.getAllUsers();
-    console.log(this.state)
   }
 
   getAllUsers() {

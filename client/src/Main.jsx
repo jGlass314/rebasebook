@@ -21,10 +21,8 @@ class Main extends React.Component {
     }
   }
   getProfile(user) {
-    console.log('made it here', user);
     axios.get(`/api/${user}`) 
     .then((res) => {
-      // console.log('res: ', res.data[0]);
       this.setState({
         view: 'profile',
         name: res.data[0].first_name + ' ' + res.data[0].last_name,
@@ -40,19 +38,16 @@ class Main extends React.Component {
   }
 
   getUsername(username) {
-    // console.log(username);
     this.setState({
       username: username
     })
   }
   getNewUsername(newUsername) {
-    // console.log(newUsername);
     this.setState({
       username: newUsername
     })
   }
   getSignedIn(signedIn) {
-    // console.log(signedIn);
     this.setState({
       signedIn: signedIn
     })

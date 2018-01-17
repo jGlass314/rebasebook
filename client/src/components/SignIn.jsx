@@ -29,7 +29,6 @@ class SignIn extends React.Component {
   }
 
   handleSubmit(e) {
-    console.log('Submitting');
     this.setState({
       newUser: true
     })
@@ -38,13 +37,11 @@ class SignIn extends React.Component {
   handleLogIn(e) {
     e.preventDefault();
     if (!this.state.username) {
-      console.log('invalid username')
       this.setState({
         undefinedUsername: true
       });
     } else {
       $.get(`/api/${this.state.username}`, (data) => {
-        console.log(data[0]);
         if (data.length) {
           this.setState({
             username: data[0].username,
@@ -53,7 +50,6 @@ class SignIn extends React.Component {
           });
           this.props.getSignedIn(true);
           this.props.getProfile(this.state.username);
-          //console.log('need to route to feed for', this.state.username)
         } else {
           this.setState({
             newUser: true,
@@ -62,14 +58,12 @@ class SignIn extends React.Component {
             usernameError: true
           });
         }
-        //console.log('in client siginin get request', data)
       })
     }  
   }
 
   handleSignUp(e) {
     e.preventDefault();
-    //console.log('in sign up')
     this.setState({
       newUser: true
     });
