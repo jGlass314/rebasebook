@@ -22,7 +22,7 @@ class Main extends React.Component {
   }
   getProfile(user) {
     console.log('made it here', user);
-    axios.get(`/${user}`) 
+    axios.get(`/api/${user}`) 
     .then((res) => {
       // console.log('res: ', res.data[0]);
       this.setState({
@@ -79,11 +79,15 @@ class Main extends React.Component {
                 getSignedIn={this.getSignedIn.bind(this)}
               /> } 
           />
-          <Route 
+          <Route
             path='/:username/feed' 
-            userId={this.state.userId}
-            username={this.state.username}
-            component={Feed} />
+            component={(routeProps) => 
+              <Feed 
+                {...routeProps}
+                userId={this.state.userId}
+                username={this.state.username} 
+              /> }
+          />
           <Route 
             path='/login' 
             component={() =>

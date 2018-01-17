@@ -110,7 +110,10 @@ class Feed extends React.Component {
         </div>
 
         <div className="feedContent">
-          <PostList postList={this.state.postList} getAllPosts={this.getAllPosts.bind(this)} name={this.state.username} />
+          <PostList 
+            postList={this.state.postList} 
+            getAllPosts={this.getAllPosts.bind(this)} 
+            name={this.state.username} />
         </div>
 
         <div className="feedSidebar">
