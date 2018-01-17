@@ -1,20 +1,31 @@
 const { Client } = require('pg');
 console.log('Initializing client');
 let databaseUrl =  process.env.DATABASE_URL || 'postgres://localhost/therebasebook';
+
 const client = new Client({
   connectionString: databaseUrl
 });
 console.log('Database URL at: ', databaseUrl);
 
+// For pure SQL, refer to database as 'client'
+
 client.connect();
 
+// To use KNEX, refer to database as 'db'
+const pg = require('knex') ({
+  client: 'pg',
+  connection: databaseUrl,
+  pool: { min: 0, max: 7 }
+});
 
-require('dotenv').config();
-const knex = require('knex') ({
-    client: 'pg',
-    connection: process.env.DATABASE_URL,
-    pool: { min: 0, max: 7 }
+
+// KNEX HELPER FUNCTIONS FOR BUILDING MODULAR 
+
+let includesUserInFriendship = function(queryBuilder, userId) {
+  queryBuilder.where(function() {
+    this.where('users_friendships.user_id_from', userId).orWhere('users_friendships.user_id_to', userId)
   });
+};
 
 module.exports = {
   getAllUsers: (callback) => {
@@ -377,12 +388,94 @@ module.exports = {
     });
   },
 
-  getFriendship: () => {
-
+  getFriendship: (userId, friendId) => {
+    return pg('users_friendships')
+      .modify(includesUserInFriendship, userId)
+      .modify(includesUserInFriendship, friendId)
+      .then((results) => {
+        let friendshipStatus;
+        if (!results || results.length === 0) {
+          // No relationship initiated
+          friendshipStatus = null;
+        } else if (results[0].state === 'friend') {
+          friendshipStatus = 'friends';
+        } else if (results.length === 1 && results[0].state === 'request') {
+          // If only one friendship entry, friendship is pending
+          if (results[0].user_id_from === userId ) {
+            // The logged in user created the pending request
+            friendshipStatus = 'response pending';
+          } else if (results[0].user_id_to === userId) {
+            // The logged in user needs to accept or decline the request
+            friendshipStatus = 'response needed';
+          }
+        } else if (results.length === 2) {
+          // If there are two entries and no friendship, friendship
+          // should be in a declined state
+          if (results[0].user_id_from === userId && results[0].state === 'request') {
+            // If the logged in user was the requester, always show them pending 
+            friendshipStatus = `response pending`;
+          } else if (results[0].user_id_from === userId && results[0].state === 'ignored')
+            // If the logged in user was the decliner, show them the decline
+            friendshipStatus = `friendship request ignored`;
+        }
+        return friendshipStatus;
+      })
   },
 
+  addFriendship: (userId, friendId) => {
+    let newConnection = {
+      user_id_from: userId,
+      user_id_to: friendId,
+    };
 
+    return module.exports.getFriendship(userId, friendId)
+      .then((results) => {
+        if (results === 'friends' || results === 'response pending') {
+          // If userId has already friended friendId, make no database changes
+          return;
+        } else if (results === 'response needed' || results === 'friendship request ignored') {
+          // If userId is responding to a pending request, or changing a previous decline,
+          // change the existing query to 'friend' and add new entry 
+          newConnection.state = 'friend';
 
+          // change existing to friended and add new entry
+          return pg.transaction((trx) => {
+            pg.insert(newConnection)
+              .into('users_friendships')
+              .transacting(trx)
+              .then((results) => {
+                return pg.where('user_id_to', userId)
+                  .where('user_id_from', friendId)
+                  .limit(1)
+                  .update({'state': 'friend'})
+                  .into('users_friendships')
+              })
+              .then(trx.commit)
+              .catch(trx.rollback);
+          })
+        } else if (results === null) {
+          // If no existing relationship, just add a new entry from user to friend
+
+          newConnection.state = 'request';
+          return pg('users_friendships')
+            .insert(newConnection)
+        }
+      });
+  },
+
+  returnFriendships: (userId, state) => {
+    if (state === 'request') {
+      return pg('users_friendships')
+        .select('users_friendships.state', 'users.id', 'users.username', 'users.first_name', 'users.last_name', 'users.picture_url')
+        .innerJoin('users', 'users.id', 'users_friendships.user_id_to')
+        .where({'user_id_to': userId})
+        .where({'state': 'request'})
+    } else {
+      return pg('users_friendships')
+        .select('users_friendships.state', 'users.id', 'users.username', 'users.first_name', 'users.last_name', 'users.picture_url')
+        .innerJoin('users', 'users.id', 'users_friendships.user_id_to')
+        .where({'user_id_from': userId})
+        .where({'state': 'friend'});
+    }
+  }
 }
-
-// SELECT posts.*, users.first_name, users.last_name FROM posts INNER JOIN users ON posts.user_id = users.id WHERE posts.id IN (SELECT users.id FROM USERS WHERE users.id NOT IN (SELECT user_friends.friend_id FROM user_friends WHERE user_friends.username = 'mattupham')) ORDER BY posts.id DESC;

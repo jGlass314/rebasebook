@@ -44,7 +44,7 @@ CREATE TABLE users_friendships (
     id SERIAL PRIMARY KEY UNIQUE,
     user_id_from INT REFERENCES USERS(id),
     user_id_to INT REFERENCES USERS(id),
-    state varchar(20),
+    state varchar(15),
     created_at timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
