@@ -26,11 +26,11 @@ class Profile_postSection extends React.Component {
           <List className="items">
           {
             this.props.posts.map((post, index) => (
-              <FadeIn>
-              <div key={index} className="profilePostBorder">
-                <Post post={post} name={this.props.username} profile={this.props.profile}/>
-                <br />
-              </div>
+              <FadeIn key={index}>
+                <div key={index} className="profilePostBorder">
+                  <Post post={post} name={this.props.username} profile={this.props.profile}/>
+                  <br />
+                </div>
               </FadeIn>
             ))
           }
