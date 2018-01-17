@@ -12,7 +12,6 @@
   "author": "Albert Chang",
   "license": "ISC",
   "devDependencies": {
-    "morgan": "^1.9.0"
   },
   "dependencies": {
     "axios": "^0.17.1",
@@ -39,6 +38,7 @@
     "semantic-ui-react": "^0.77.2",
     "socket.io": "^2.0.4",
     "underscore": "^1.8.3",
-    "webpack": "^2.2.1"
+    "webpack": "^2.2.1",
+    "morgan": "^1.9.0"
   }
 }
