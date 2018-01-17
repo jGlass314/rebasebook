@@ -59,7 +59,7 @@ class Profile extends React.Component {
   getUserInfo(user) {
     // var user = this.state.profilePageOwner;
     // console.log(user, ' is profile owner');
-    axios.get(`/${user}`)
+    axios.get(`/api/${user}`)
       .then((responseUserInfo) => {
         this.setState({
           userInfo: responseUserInfo.data[0],
@@ -74,7 +74,7 @@ class Profile extends React.Component {
   getUserProfileInfo(user) {
     // var user = this.state.profilePageOwner;
     console.log('user...', user)
-    axios.get(`/${user}/profilePage`)
+    axios.get(`/api/${user}/profilePage`)
       .then((responseUserProfileInfo) => {
         console.log('profile page info....', responseUserProfileInfo);
         this.setState({
@@ -88,7 +88,7 @@ class Profile extends React.Component {
 
   getUserPosts(user) {
     var username = this.state.username;
-    axios.get(`/${username}/posts/${user}`)
+    axios.get(`/api/${username}/posts/${user}`)
       .then((response) => {
         this.setState({
           posts: response.data
@@ -102,7 +102,7 @@ class Profile extends React.Component {
   getFriends(user) {
     var username = this.state.username;
     // var otherUsername = user;
-    axios.get(`/${username}/friendsList/${user}`)
+    axios.get(`/api/${username}/friendsList/${user}`)
       .then((response) => {
         console.log('friends list...', response.data);
         var isFriend = this.checkIfFriend(username, response.data, user);
@@ -130,7 +130,7 @@ class Profile extends React.Component {
   addFriend() {
     var username = this.state.username;
     var friendToAdd = this.state.profilePageOwner;
-    axios.post(`/${username}/addFriend/${friendToAdd}`)
+    axios.post(`/api/${username}/addFriend/${friendToAdd}`)
       .then((response) => {
         this.getFriends(this.state.profilePageOwner);
       })
@@ -142,7 +142,7 @@ class Profile extends React.Component {
   removeFriend() {
     var username = this.state.username;
     var friendToRemove = this.state.profilePageOwner;
-    axios.post(`/${username}/removeFriend/${friendToRemove}`)
+    axios.post(`/api/${username}/removeFriend/${friendToRemove}`)
       .then((response) => {
         this.getFriends(this.state.profilePageOwner);
       })
@@ -160,7 +160,7 @@ class Profile extends React.Component {
   updateProfile(changes) {
     var username = this.state.username;
     console.log('sending update profile request to server', changes);
-    axios.patch(`/${username}/updateProfile`, changes)
+    axios.patch(`/api/${username}/updateProfile`, changes)
       .then((response) => {
         this.getUserProfileInfo(this.state.profilePageOwner);
       })

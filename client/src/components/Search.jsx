@@ -28,7 +28,7 @@ class SearchBar extends Component {
 
   getAllUsers() {
     var user = this.state.username;
-    axios.get(`/search/users`)
+    axios.get(`/api/search/users`)
     .then((response) => {
       let searchNames = response.data.map(function(user){
         return { 

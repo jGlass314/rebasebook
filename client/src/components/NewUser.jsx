@@ -38,7 +38,7 @@ class NewUser extends React.Component {
       this.setState({
         newUsername: this.state.username
       })
-      $.post(`/${this.state.username}`, this.state, () => {
+      $.post(`/api/${this.state.username}`, this.state, () => {
         console.log('post into db done!')
         this.setState({
           redirect: true,

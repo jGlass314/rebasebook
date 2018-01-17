@@ -309,7 +309,7 @@ module.exports = {
         console.log('Error', err)
         callback(err, null);
       } else {  
-        console.log('/:username/posts/friends posts from db...')
+        console.log('/:username/posts/friends posts from db...', res.rows);
         callback(null, res.rows);
       }  
     });
