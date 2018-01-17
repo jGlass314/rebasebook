@@ -4,6 +4,7 @@ import PostList from './PostList.jsx';
 import Profile from './Profile.jsx';
 import FBHeader from './Header.jsx';
 import axios from 'axios';
+import FriendsList from './FriendList.jsx'
 import { Button, Icon, Image, Header, List, Item, Divider, Menu, Advertisement } from 'semantic-ui-react';
 
 class Feed extends React.Component {
@@ -11,37 +12,52 @@ class Feed extends React.Component {
     super(props);
     this.state = {
       postList: [],
-      username: '',
+      username: this.props.username,
+      userId: this.props.userId,
+      friends: [],
+      friendRequests: []
     }
   }
   componentDidMount() {
     this.getAllPosts();
   }
+
+  getFriendsList() {
+    let params = {
+      userId: this.state.userId,
+      type: 'friends'
+    }
+    axios.get('/api/friends_list', {params: params})
+      .then((results) => {
+        this.setState({
+          friends: results 
+        })
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+  }
+
   getAllPosts() {
-    // console.log(this.props);
-    let username = this.props.match.params.username;
-    console.log('username', username);
-    this.setState({
-      username: username
-    })
-    //create new route
+
+    let username=this.state.username;
     axios.get(`/api/${username}/posts/friends`)
       .then((res1) => {
-        console.log('ALL FRIENDS POSTS', res1.data);
+        // console.log('ALL FRIENDS POSTS', res1.data);
         axios.get(`/api/${username}/posts/nonFriends`)
           .then((res2) => {
-            console.log('ALL NON-FRIENDS POSTS', res2.data);
+            // console.log('ALL NON-FRIENDS POSTS', res2.data);
             //concats all friends posts, then all non-friends posts
             this.setState({
               postList: res1.data.concat(res2.data)
             })
           })
           .catch((err) => {
-            console.log(err);
+            console.error(err);
           });
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   }
   render() {
@@ -49,10 +65,6 @@ class Feed extends React.Component {
       <div className="feedContainer">
         <div className="feedSidebar">
           <div className = "feedSidebarUser">
-            {/* <Button icon labelPosition='left' fluid>
-              <Image src='/images/profile_default.jpg' />
-              User Name
-            </Button> */}
             <Button icon labelPosition='left' fluid className="feedSideBarUserButton">
               <Icon name='user' />
               {this.props.match.params.username}
@@ -102,9 +114,10 @@ class Feed extends React.Component {
         </div>
 
         <div className="feedSidebar">
+          {/*<FriendsList friends={this.state.friends} />
         
           <div className="feedSidebarTrending">
-            <p className="feedTrendingLabel">Trending</p>
+           <p className="feedTrendingLabel">Trending</p>
             <Item.Group className="feedSidebarTrendingItem">
               <Item>
                 <Icon name='lightning' />
@@ -151,54 +164,8 @@ class Feed extends React.Component {
                 <div className="feedSidebarTrendingTopicHeader">Advertisement</div>
                 <Item.Description>
                   <img className="adPic" src="/images/hackreactor.png" />
-                  {/* <Advertisement unit='medium rectangle' test='Medium Rectangle' centered="true"/> */}
                 </Item.Description>
-                {/* <Item.Extra>loremipsum.com</Item.Extra> */}
               </Item.Content>
-              </Item>
-            </Item.Group>
-          </div>
-        </div>
-
-        <div className="feedSidebar">
-          
-          {/* <div className="feedSidebarTrending">
-            <p>Trending</p>
-            
-            <Item.Group className="feedSidebarTrendingItem">
-              <Item>
-                <Icon name='lightning' />
-                <Item.Content>  
-                  <div className="feedSidebarTrendingTopicHeader">Trending Topic</div>
-                  <Item.Description>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </Item.Description>
-                  <Item.Extra>loremipsum.com</Item.Extra>
-                </Item.Content>
-              </Item>
-            </Item.Group>
-            <Item.Group className="feedSidebarTrendingItem">
-              <Item>
-                <Icon name='lightning' />
-                <Item.Content>  
-                  <div className="feedSidebarTrendingTopicHeader">Trending Topic</div>
-                  <Item.Description>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </Item.Description>
-                  <Item.Extra>loremipsum.com</Item.Extra>
-                </Item.Content>
-              </Item>
-            </Item.Group>
-            <Item.Group className="feedSidebarTrendingItem">
-              <Item>
-                <Icon name='lightning' />
-                <Item.Content>  
-                  <div className="feedSidebarTrendingTopicHeader">Trending Topic</div>
-                  <Item.Description>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </Item.Description>
-                  <Item.Extra>loremipsum.com</Item.Extra>
-                </Item.Content>
               </Item>
             </Item.Group>
           </div> */}

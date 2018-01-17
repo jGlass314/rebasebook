@@ -16,7 +16,8 @@ class SignIn extends React.Component {
       profileShows: false,
       headerShows: false,
       undefinedUsername: false,
-      usernameError: false
+      usernameError: false,
+      userId: null
     };
   }
 
@@ -50,9 +51,9 @@ class SignIn extends React.Component {
             newUser: false,
             redirect: true
           });
-          this.getUsername();
           this.props.getSignedIn(true);
-          console.log('need to route to feed for', this.state.username)
+          this.props.getProfile(this.state.username);
+          //console.log('need to route to feed for', this.state.username)
         } else {
           this.setState({
             newUser: true,
@@ -61,21 +62,20 @@ class SignIn extends React.Component {
             usernameError: true
           });
         }
-        console.log('in client siginin get request', data)
+        //console.log('in client siginin get request', data)
       })
     }  
   }
 
   handleSignUp(e) {
     e.preventDefault();
-    console.log('in sign up')
+    //console.log('in sign up')
     this.setState({
       newUser: true
     });
   }
 
   getUsername() {
-    console.log('Getting username!');
     this.props.getUsername(this.state.username);
   }
 

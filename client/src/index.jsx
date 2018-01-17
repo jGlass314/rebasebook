@@ -9,38 +9,16 @@ import Header from './components/Header.jsx';
 import Feed from './components/Feed.jsx';
 import SignIn from './components/SignIn.jsx';
 import { BrowserRouter, Router, Route, Switch, Link } from 'react-router-dom';
-import axios from 'axios';
+
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      view: 'feed',
-      name: '',
-      picture_url: '',
-      username: ''
-    };
   }
-  getProfile(user) {
-    // axios call to db to get profile
-    axios.get(`/api/${user}`) 
-    .then((res) => {
-      console.log('res: ', res.data[0]);
-      this.setState({
-        view: 'profile',
-        name: res.data[0].first_name + ' ' + res.data[0].last_name,
-        picture_url: res.data[0].picture_url,
-        username: res.data[0].username
-      })
 
-    })
-    .catch((err) => {
-      console.log('err: ', err);
-    })
-  }
   render() {
     return (
-      <Main getProfile={this.getProfile.bind(this)} />
+      <Main />
     )
   }
 }

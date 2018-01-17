@@ -21,9 +21,9 @@ class Header extends React.Component {
   }
   render() {
     const profilePath = '/' + this.props.name + '/profile/' + this.props.name;
-    console.log(profilePath);
+    // console.log(profilePath);
     const feedPath = '/' + this.props.name + '/feed';
-    console.log(feedPath);
+    // console.log(feedPath);
     return (
       <div className="global-header">
         {
