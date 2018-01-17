@@ -11,8 +11,7 @@
   },
   "author": "Albert Chang",
   "license": "ISC",
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
     "axios": "^0.17.1",
     "babel-core": "^6.23.1",
@@ -26,6 +25,7 @@
     "knex": "^0.14.2",
     "lodash": "^4.17.4",
     "moment": "^2.20.1",
+    "morgan": "^1.9.0",
     "pg": "7.4.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
@@ -39,7 +39,6 @@
     "semantic-ui-react": "^0.77.2",
     "socket.io": "^2.0.4",
     "underscore": "^1.8.3",
-    "webpack": "^2.2.1",
-    "morgan": "^1.9.0"
+    "webpack": "^2.2.1"
   }
 }

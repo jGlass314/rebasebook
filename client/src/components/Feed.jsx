@@ -87,7 +87,7 @@ class Feed extends React.Component {
           </div>
 
           <div className="exploreTag">Explore</div>
-            
+          
           <div className = "feedSidebarExplore" >
             <Button icon labelPosition='left' fluid className="feedSideBarUserButton">
               <Icon name='calendar' />
@@ -101,6 +101,7 @@ class Feed extends React.Component {
               <Icon name='group' />
               Friends
             </Button>
+            
             <Button icon labelPosition='left' fluid className="feedSideBarUserButton">
               <Icon name='bookmark' />
               Saved

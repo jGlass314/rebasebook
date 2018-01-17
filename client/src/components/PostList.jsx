@@ -24,18 +24,23 @@ class PostList extends React.Component {
   render() {
     return (
       <div>
-        <CreatePost onClick={this.receivePostText.bind(this)} getAllPosts={this.getAllPosts.bind(this)} name={this.props.name} />
+        <CreatePost 
+          onClick={this.receivePostText.bind(this)}
+          getAllPosts={this.getAllPosts.bind(this)}
+          name={this.props.name} />
         <br />
         {
           this.props.postList.map((post, index) => (
-            <FadeIn>
-            <div key={index}>
-              <Post
-                post={post}
-                name={this.props.name}
-              />
-              <br />
-            </div>
+            <FadeIn key={index}>
+              <div key={index}>
+                <Post
+                  post={post}
+                  authorId = {post.user_id}
+                  authorUsername= {post.username}
+                  name={this.props.name}
+                />
+                <br />
+              </div>
             </FadeIn>
           ))
         }

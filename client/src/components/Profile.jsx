@@ -21,52 +21,59 @@ class Profile extends React.Component {
       posts: [],
       friends: [],
       friend: false,
-      username: props.match.params.friendname, // not an error, do not change
-      profilePageOwner: props.match.params.username, // not an error, do not change
+      username: props.loggedInUsername, // not an error, do not change
       profilePageInfo: '',
       isOwner: true,
-      userInfo: {},
+      profileInfo: {},
       view: 'Timeline',
-      clickedFriend: ''
+      clickedFriend: '',
+      friendList: [],
+      profileUserId: null,
+      profilePageOwner: props.match.params.friendname, // not an error, do not change
+      loggedInUserId: props.loggedInUserId
     }
   }
 
   componentDidMount() {
     window.scrollTo(0, 0);
-    this.getUserInfo(this.state.profilePageOwner);
+    this.loadProfileInfo(this.state.profilePageOwner);
     this.getUserPosts(this.state.profilePageOwner);
-    this.getFriends(this.state.profilePageOwner);
-    this.getUserProfileInfo(this.state.profilePageOwner);
+    this.loadSupplementaryProfileInfo(this.state.profilePageOwner);
   }  
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.pathname !== this.props.location.pathname) {
-
       this.setState({
         profilePageOwner: nextProps.match.params.friendname
       });
-      this.getUserInfo(nextProps.match.params.friendname);
+      this.loadProfileInfo(nextProps.match.params.friendname);
       this.getUserPosts(nextProps.match.params.friendname);
-      this.getFriends(nextProps.match.params.friendname);
-      this.getUserProfileInfo(nextProps.match.params.friendname);
+      this.loadSupplementaryProfileInfo(nextProps.match.params.friendname);
     }
   }
 
-  getUserInfo(user) {
+  loadProfileInfo(profileName) {
 
-    axios.get(`/api/${user}`)
+    axios.get(`/api/${profileName}`)
       .then((responseUserInfo) => {
+
+        let profileUserId=responseUserInfo.data[0].id;
+
         this.setState({
-          userInfo: responseUserInfo.data[0],
-          isOwner: this.state.username === user
+          profileInfo: responseUserInfo.data[0],
+          profileUserId: profileUserId,
+          isOwner: this.state.loggedInUsername === profileName
         });
+
+        this.getFriends(profileUserId);
+        this.getFriendshipStatus(profileUserId);
       })
       .catch((error) => {
         console.log(error);
       }); 
   }
 
-  getUserProfileInfo(user) {
+  loadSupplementaryProfileInfo(user) {
     // var user = this.state.profilePageOwner;
     axios.get(`/api/${user}/profilePage`)
       .then((responseUserProfileInfo) => {
@@ -80,7 +87,7 @@ class Profile extends React.Component {
   }
 
   getUserPosts(user) {
-    var username = this.state.username;
+    var username = this.state.loggedInUsername;
     axios.get(`/api/${username}/posts/${user}`)
       .then((response) => {
         this.setState({
@@ -92,54 +99,62 @@ class Profile extends React.Component {
       }); 
   }
 
-  getFriends(user) {
-    var username = this.state.username;
-    // var otherUsername = user;
-    axios.get(`/api/${username}/friendsList/${user}`)
-      .then((response) => {
-        var isFriend = this.checkIfFriend(username, response.data, user);
+  getFriends(profileId) {
+    let username = this.state.loggedInUsername;
+    let params = {
+      userId: profileId,
+      type: 'friend'
+    }
+
+    axios.get('/api/friend_list', {params: params})
+      .then((results) => {
+        console.log('friendlist on page', results);
         this.setState({
-          friends: response.data,
-          friend: isFriend
+          friendList: results.data
         })
       })
       .catch((error) => {
-        console.log(error);
-      }); 
+        console.error(error);
+      });
   }
 
-  checkIfFriend(username, friendsList, otherUsername) {
-    for (var i = 0; i < friendsList.length; i++) {
-      var user = friendsList[i];
-      if (user.username === username) {
-        return true;
-      }
+  getFriendshipStatus(profileId) {
+    let loggedInUserId = this.state.loggedInUserId;
+
+    let params = {
+      userId: loggedInUserId,
+      friendId: profileId
     }
-    return false;
-  }
 
-  addFriend() {
-    var username = this.state.username;
-    var friendToAdd = this.state.profilePageOwner;
-    axios.post(`/api/${username}/addFriend/${friendToAdd}`)
-      .then((response) => {
-        this.getFriends(this.state.profilePageOwner);
+    axios.get('/api/friendship', {params: params})
+      .then((results) => {
+        let friendshipStatus = results.data && results.data.friendship_status;
+        this.setState({
+          friendshipStatus: friendshipStatus
+        });
       })
       .catch((error) => {
-        console.log(error);
-      }); 
+        console.error(error);
+      });
+  }
+
+  addFriend(friendId) {
+    let data = {
+      userId: this.state.loggedInUserId,
+      friendId: friendId
+    }
+
+    axios.post('/api/friendship', data)
+      .then((response) => {
+        this.getFriendshipStatus(friendId);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
   } 
 
   removeFriend() {
-    var username = this.state.username;
-    var friendToRemove = this.state.profilePageOwner;
-    axios.post(`/api/${username}/removeFriend/${friendToRemove}`)
-      .then((response) => {
-        this.getFriends(this.state.profilePageOwner);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // No way currently. Ginger to do in V2. 
   }
 
   handleNavigation(event) {
@@ -149,7 +164,7 @@ class Profile extends React.Component {
   }
 
   updateProfile(changes) {
-    var username = this.state.username;
+    var username = this.state.loggedInUsername;
     axios.patch(`/api/${username}/updateProfile`, changes)
       .then((response) => {
         this.getUserProfileInfo(this.state.profilePageOwner);
@@ -168,14 +183,46 @@ class Profile extends React.Component {
   render() {
     return (
       <div className="profile">
-        <Profile_backgroundAndProfilePic userInfo={this.state.userInfo} friend={this.state.friend} addFriend={this.addFriend.bind(this)} removeFriend={this.removeFriend.bind(this)} isOwner={this.state.isOwner} profilePageInfo={this.state.profilePageInfo} />
-        <Profile_navigation handleNavigation={this.handleNavigation.bind(this)} view={this.state.view} />
-        <Profile_about view={this.state.view} profilePageInfo={this.state.profilePageInfo} updateProfile={this.updateProfile.bind(this)} isOwner={this.state.isOwner} />
-        <Profile_allFriends view={this.state.view} friends={this.state.friends} />
-        <Profile_intro view={this.state.view} profilePageInfo={this.state.profilePageInfo} />
-        <Profile_friends friend={this.state.clickedFriend} getFriendName={this.getFriendName.bind(this)} friends={this.state.friends} view={this.state.view} owner={this.state.profilePageOwner} user={this.state.username} />
-        <Profile_photos view={this.state.view} />
-        <Profile_postSection getUserPosts={this.getUserPosts.bind(this)} username={this.state.profilePageOwner} posts={this.state.posts} view={this.state.view} isOwner={this.state.isOwner} />
+        <Profile_backgroundAndProfilePic 
+          userInfo={this.state.profileInfo}
+          friend={this.state.friend}
+          addFriend={this.addFriend.bind(this)}
+          removeFriend={this.removeFriend.bind(this)}
+          isOwner={this.state.isOwner}
+          friendshipStatus={this.state.friendshipStatus}
+          profilePageInfo={this.state.profilePageInfo} 
+          profileUserId={this.state.profileUserId}/>
+        <Profile_navigation
+          handleNavigation={this.handleNavigation.bind(this)}
+          view={this.state.view} />
+        <Profile_about
+          view={this.state.view}
+          profilePageInfo={this.state.profilePageInfo}
+          updateProfile={this.updateProfile.bind(this)}
+          isOwner={this.state.isOwner} />
+        <Profile_allFriends
+          view={this.state.view}
+          friendList={this.state.friendList}
+          friends={this.state.friends} />
+        <Profile_intro
+          view={this.state.view}
+          profilePageInfo={this.state.profilePageInfo} />
+        <Profile_friends
+          friendList={this.state.friendList}
+          friend={this.state.clickedFriend}
+          getFriendName={this.getFriendName.bind(this)}
+          friends={this.state.friends}
+          view={this.state.view}
+          owner={this.state.profilePageOwner}
+          user={this.state.username} />
+        <Profile_photos 
+          view={this.state.view} />
+        <Profile_postSection 
+          getUserPosts={this.getUserPosts.bind(this)} 
+          username={this.state.profilePageOwner} 
+          posts={this.state.posts} 
+          view={this.state.view} 
+          isOwner={this.state.isOwner} />
       </div>
     );
   }

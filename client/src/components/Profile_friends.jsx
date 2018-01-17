@@ -1,6 +1,6 @@
 import React from 'react';
 import { Divider, Header, List, Icon, Grid, Image } from 'semantic-ui-react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 class Profile_friends extends React.Component {
   constructor(props) {
@@ -11,31 +11,37 @@ class Profile_friends extends React.Component {
       username: ''
     }
   }
-  handleClickedFriend(event) {
 
-    this.props.getFriendName(event.target.id);
-  }
   render() {
-    let friendUrl = '/' + this.props.friend + '/profile/' + this.props.user;
 
+    let countOfFriends = `  ·  ${this.props.friendList.length} ${(this.props.friendList.length === 1) ? 'friend' : 'friends'}`
+    
     return (
-      <div className={this.props.view === 'Timeline' ? "friendsList" : "hide"}>
+      <div 
+        className={this.props.view === 'Timeline' ? "friendsList" : "hide"}>
         <Header className="header"> 
           <Icon name="users"></Icon>
           Friends
         </Header>
         <span className="friendsCount">
-          &nbsp; · &nbsp; {this.props.friends.length} {(this.props.friends.length === 1) ? 'friend' : 'friends'}
+          {countOfFriends}
         </span>
         <div className="friends">
-          {
-            this.props.friends.slice(0, 9).map((friend, index) => (
-              <div className="friend">
-                <Link to={friendUrl}><img src={friend.picture_url} id={friend.username} onClick={(event) => this.handleClickedFriend(event) }/></Link>
-                <Link to={friendUrl}><span className="friendName" id={friend.username} onClick={(event) => this.handleClickedFriend(event) }><strong> {friend.first_name} {friend.last_name} </strong> </span></Link>
+          {this.props.friendList.slice(0, 9).map((friend, index) => {
+            let friendUrl = '/profile/' + friend.username;
+            return (
+              <div key={friend.id} className="friend">
+                <Link to={friendUrl}>
+                  <img src={friend.picture_url} id={friend.username}/>
+                </Link>
+                <Link to={friendUrl}>
+                  <span className="friendName" id={friend.username}>
+                    <strong> {friend.first_name} {friend.last_name} </strong>
+                  </span>
+                </Link>
               </div>
-            ))
-          }
+            )
+          })}
         </div>
       </div>
     );

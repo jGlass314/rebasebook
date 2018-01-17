@@ -95,8 +95,15 @@ class Main extends React.Component {
             } 
           />
           <Route 
-            path='/:username/profile/:friendname'
-            component={Profile} />
+            path='/profile/:friendname'
+            component={ (routeProps) =>
+              <Profile 
+                {...routeProps}
+                loggedInUserId={this.state.userId}
+                loggedInUsername={this.state.username}
+              />
+            } 
+          />
         </Switch>
         </div>
       </main>

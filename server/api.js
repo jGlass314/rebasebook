@@ -148,8 +148,9 @@ const api = {
       // This endpoint creates a new friendship from userId to friendId. It will complete
       // the friendship if a pending relationship is in place
 
-      let userId = parseInt(req.query.userId);
-      let friendId = parseInt(req.query.friendId);  
+      let userId = parseInt(req.body.userId);
+      let friendId = parseInt(req.body.friendId);
+
       db.addFriendship(userId, friendId)
         .then((results) => {
           console.log(results);
@@ -203,7 +204,7 @@ const api = {
 
       let userId = parseInt(req.query.userId);
       let type = req.query.type === 'requests' ? 'request' : 'friend';
-      console.log(req.query.type, type);
+      console.log('getting friends for', userId, type);
       if (!userId) {
         res.status(400).json('bad request');
       }
@@ -234,7 +235,6 @@ const api = {
   },
 
   post: {
-
     createPost: function(req, res) {
       db.createPost(req.params.username, req.body.text, (err, data) => {
         if (err) {
@@ -343,6 +343,10 @@ const api = {
 
 
 //USER
+route.post('/friendship', api.user.addFriendship); // CG: ginger's new friendship endpoint
+route.get('/friendship', api.user.getFriendship); // CG: This endpoint returns the status of an existing friendship request between two users.
+route.get('/friend_list', api.user.getAllFriends);
+
 route.get('/:username/profilePage', api.user.getProfilePage); // get profilePage info for user
 route.get('/:username/friendsList/:otherUsername', api.user.getFriendsList); // get a friends friend list
 route.get('/:firstname/:lastname', api.user.getUsername); //gets the username of a user by first name, last name
@@ -355,12 +359,7 @@ route.get('/:username', api.user.getUser); //gets a user
 route.post('/:username/addFriend/:friendToAdd', api.user.addFriend); //add friend to user
 route.post('/:username/removeFriend/:friendToRemove', api.user.removeFriend); //remove friend from user's friends list
 route.post('/:username', api.user.createUser); //creates a new user
-
 route.patch('/:username/updateProfile', api.user.updateProfile); //update current user's profile
-
-route.post('/friendship', api.user.addFriendship); // CG: ginger's new friendship endpoint
-route.get('/friendship', api.user.getFriendship); // CG: This endpoint returns the status of an existing friendship request between two users.
-route.get('/friend_list', api.user.getAllFriends);
 
 
 //USERS

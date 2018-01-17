@@ -1,5 +1,6 @@
 import React from 'react';
 import { Header, Icon, Image, Button } from 'semantic-ui-react';
+import FriendUserButton from './FriendUserButton.jsx';
 
 class Profile_backgroundAndProfilePic extends React.Component {
   constructor(props) {
@@ -17,39 +18,12 @@ class Profile_backgroundAndProfilePic extends React.Component {
         <Header size="large" inverted color="grey" textAlign="center" className="name"> 
           {this.props.userInfo.first_name} {this.props.userInfo.last_name} 
         </Header>
-        {this.props.isOwner ? 
-
-          <span></span> :
-
-          this.props.friend ?
-
-          <Button compact animated inverted size="small" className="friendStatus removeFriend" onClick={this.props.removeFriend.bind(this)} >
-            <Button.Content visible> 
-              <Icon name="check" />
-              &nbsp; Friends 
-            </Button.Content>  
-            <Button.Content hidden> 
-              <Icon name="delete" />
-              &nbsp; Remove Friend 
-            </Button.Content> 
-          </Button>
-
-          :
-
-          <Button compact inverted size="small" className="friendStatus addFriend" onClick={this.props.addFriend.bind(this)}>
-            <Icon name="add user"/>
-            Add Friend
-          </Button>
-        }
-        {this.props.isOwner ?
-
-          <span></span> :
-          
-          <Button compact inverted size="small" className="messageFriend">
-            <Icon name='pointing right'/>
-            &nbsp; &nbsp; Poke {this.props.userInfo.first_name}
-          </Button>
-        }  
+        {this.props.isOwner || 
+          <FriendUserButton 
+            profileUserId={this.props.profileUserId}
+            friendshipStatus={this.props.friendshipStatus}
+            removeFriend={this.props.removeFriend} 
+            addFriend={this.props.addFriend} />} 
       </div>
     );
   }
