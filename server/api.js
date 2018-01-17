@@ -5,7 +5,6 @@ const db = require('../database-posgtres/index.js');
 const api = {
 
   user: {
-
     getProfile: function (req, res) {
       db.searchSomeone(req.params.user, (err, data) => {
         if (err) {
@@ -19,10 +18,12 @@ const api = {
 
     getProfilePage: function(req, res) {
       var username = req.params.username;
+      console.log('Username request received: ', username)
       db.getProfilePageInfo(username, (err, data) => {
         if (err) {
           res.status(500).send(err);
         } else {
+          console.log('returned data', data)
           // console.log('data.......', data['0'].user_data.work);
           res.status(200).json(data);
         }
@@ -382,14 +383,13 @@ const api = {
 
 
 //USER
+route.get('/:username/profilePage', api.user.getProfilePage); // get profilePage info for user
 route.get('/:username/friendsList/:otherUsername', api.user.getFriendsList); // get a friends friend list
 route.get('/:firstname/:lastname', api.user.getUsername); //gets the username of a user by first name, last name
 route.get('/likers', api.user.getLikers); // get all likers of a particular user
 route.get('/:username/likes', api.user.getLiked); //get liked users of user
-route.get('/:username/profilePage', api.user.getProfilePage); // get profilePage info for user
 route.get('/:username/profile/:user', api.user.getProfile); //get profile of a specific user
 route.get('/:username', api.user.getUser); //gets a user
-
 
 
 route.post('/:username/addFriend/:friendToAdd', api.user.addFriend); //add friend to user

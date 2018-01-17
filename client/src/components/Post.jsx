@@ -104,10 +104,12 @@ class Post extends React.Component {
   getProfileInfo() {
     axios.get(`/api/${this.props.post.first_name}/${this.props.post.last_name}`)
       .then((username) => {
+        console.log('username here', username);
         axios.get(`/api/${username.data[0].username}/profilePage`)
           .then((info) => {
+            console.log('info here:', info)
             this.setState({
-              profilePicUrl: info.data[0].user_data.profile_picture
+              profilePicUrl: info.data[0] && info.data[0].user_data.profile_picture
             })
             console.log('This is the profile info', info);
           })
