@@ -25,10 +25,10 @@ class Feed extends React.Component {
       username: username
     })
     //create new route
-    axios.get(`/${username}/posts/friends`)
+    axios.get(`/api/${username}/posts/friends`)
       .then((res1) => {
         console.log('ALL FRIENDS POSTS', res1.data);
-        axios.get(`/${username}/posts/nonFriends`)
+        axios.get(`/api/${username}/posts/nonFriends`)
           .then((res2) => {
             console.log('ALL NON-FRIENDS POSTS', res2.data);
             //concats all friends posts, then all non-friends posts

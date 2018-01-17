@@ -42,7 +42,7 @@ class SignIn extends React.Component {
         undefinedUsername: true
       });
     } else {
-      $.get(`/${this.state.username}`, (data) => {
+      $.get(`/api/${this.state.username}`, (data) => {
         console.log(data[0]);
         if (data.length) {
           this.setState({

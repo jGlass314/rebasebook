@@ -23,7 +23,7 @@ class App extends React.Component {
   }
   getProfile(user) {
     // axios call to db to get profile
-    axios.get(`/${user}`) 
+    axios.get(`/api/${user}`) 
     .then((res) => {
       console.log('res: ', res.data[0]);
       this.setState({
