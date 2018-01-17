@@ -1,11 +1,13 @@
 import React from 'react';
 import { Divider, Header, Icon, Image } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
 
 class Profile_allFriends extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      view: props.view
+      view: props.view,
+      friendList: props.friendList
     }
   }
 
@@ -20,14 +22,21 @@ class Profile_allFriends extends React.Component {
             </Header>
           </div>
           <div className="allFriends">
-          {
-            this.props.friends.slice(0, 9).map((friend) => (
-              <div className="friendInAllFriends">
-                <img src={friend.picture_url} />
-                <a className="nameLink"><span className="friendName"> <strong> {friend.first_name} {friend.last_name} </strong> </span></a>
-              </div>  
-            ))
-          }
+            {this.props.friendList.slice(0, 9).map((friend) => {
+              let friendUrl = '/profile/' + friend.username;
+              return (
+                <div key={friend.id} className="friend">
+                  <Link to={friendUrl}>
+                    <img src={friend.picture_url} id={friend.username}/>
+                  </Link>
+                  <Link to={friendUrl}>
+                    <span className="friendName" id={friend.username}>
+                      <strong> {friend.first_name} {friend.last_name} </strong>
+                    </span>
+                  </Link>
+                </div>
+              )
+            })}
           </div>  
         </div>  
       </div>

@@ -46,14 +46,14 @@ class Profile_postSection extends React.Component {
           <List className="visitorView">
           {
             this.props.posts.map((post, index) => (
-              <FadeIn>
-              <div key={index} className="profilePostBorder" profile={this.props.profile}>
-                <Post 
-                  post={post}
-                  authorId={post.user_id}
-                  authorUsername= {post.username}/>
-                <br />
-              </div>
+              <FadeIn key={index}>
+                <div key={index} className="profilePostBorder" profile={this.props.profile}>
+                  <Post 
+                    post={post}
+                    authorId={post.user_id}
+                    authorUsername= {post.username}/>
+                  <br />
+                </div>
               </FadeIn>
             ))
           }
