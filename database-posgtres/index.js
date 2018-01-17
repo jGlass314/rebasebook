@@ -155,7 +155,7 @@ module.exports = {
     });
   },
   getAllPosts: (callback) => {
-    let queryStr = 'SELECT posts.*, users.first_name, users.last_name, users.username FROM posts INNER JOIN users ON users.id = posts.user_id ORDER BY id DESC';
+    let queryStr = 'SELECT posts.*, users.id, users.first_name, users.last_name, users.username FROM posts INNER JOIN users ON users.id = posts.user_id ORDER BY id DESC';
     client.query(queryStr, (err, res) => {
       if (err) {
         console.log(err.message);
