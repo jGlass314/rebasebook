@@ -5,7 +5,7 @@ CREATE DATABASE therebasebook;
 
 -- SERIAL- adds not null constraint, should increment by 1 for each new entry
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY NOT NULL UNIQUE,
+    id SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR (25) NOT NULL UNIQUE,
     first_name VARCHAR (25),
     last_name VARCHAR (25),
@@ -19,7 +19,7 @@ INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('kmengh
 INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('sjain', 'Shubhra', 'Jain', 'https://petcube.com/blog/content/images/2017/04/kitten-supplies-cover-1.jpg');
 
 CREATE TABLE posts (
-    id SERIAL PRIMARY KEY NOT NULL UNIQUE,
+    id SERIAL PRIMARY KEY NOT NULL,
     user_id INTEGER REFERENCES users(id) NOT NULL,
     post_text VARCHAR (1000) NOT NULL,
     post_timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -127,4 +127,38 @@ INSERT INTO user_profiles (user_id, user_data) VALUES (3,
     "relationship_status": "Single", 
     "birthday": "February 10, 2017"
   }'
-);      
+);
+
+  CREATE TABLE CHATS (
+    id SERIAL PRIMARY KEY,
+    user_1 INT REFERENCES USERS(id) -- make this an index
+    user_2 INT REFERENCES USERS(id) -- make this an index
+  );
+
+  CREATE TABLE MESSAGES (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    chat_id INT REFERENCES CHATS(id) -- make this an index
+    text VARCHAR(1000) NOT NULL,
+    author_id INT REFERENCES USERS(id)
+  );
+
+  CREATE TABLE NOTIFICATIONS (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    user_id INT REFERENCES USERS(id),
+    seen BOOLEAN NOT NULL DEFAULT FALSE
+  );
+
+  CREATE TABLE NOTIFICATIONS_FRIENDSHIPS (
+    id SERIAL PRIMARY KEY,
+    notifications_id INT REFERENCES NOTIFICATIONS(id),
+    friendships_id INT REFERENCES USERS_FRIENDSHIPS(id)
+  );
+
+  CREATE TABLE NOTIFICATIONS_MESSAGES (
+    id SERIAL PRIMARY KEY,
+    notifications_id INT REFERENCES NOTIFICATIONS(id),
+    messages_id INT REFERENCES MESSAGES(id),
+    read BOOLEAN NOT NULL DEFAULT FALSE
+  );
