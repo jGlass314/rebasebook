@@ -435,7 +435,7 @@ module.exports = {
               .then(rows => {
                 usersFriendshipsId = rows.length && rows[0].uf_id;
                 console.log('users_friendships.id:', usersFriendshipsId);
-                return pg.insert({'user_id',: userId})
+                return pg.insert({'user_id': userId})
                   .into('notifications')
                   .returning(id)
                   .transacting(trx)
