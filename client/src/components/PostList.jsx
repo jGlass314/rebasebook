@@ -17,13 +17,11 @@ class PostList extends React.Component {
     this.props.getAllPosts();
   }
   receivePostText(text) {
-    console.log(text);
     this.setState({
       receivedText: text
     })
   }
   render() {
-    console.log('This is the logged in name', this.props.name);
     return (
       <div>
         <CreatePost onClick={this.receivePostText.bind(this)} getAllPosts={this.getAllPosts.bind(this)} name={this.props.name} />

@@ -30,7 +30,6 @@ class NewUser extends React.Component {
 
   handleSubmit() {
     if (!this.state.username || !this.state.firstName || !this.state.lastName) {
-      console.log('invalid account input')
       this.setState({
         invalidInput: true
       });
@@ -39,7 +38,6 @@ class NewUser extends React.Component {
         newUsername: this.state.username
       })
       $.post(`/api/${this.state.username}`, this.state, () => {
-        console.log('post into db done!')
         this.setState({
           redirect: true,
           newUsername: this.state.username

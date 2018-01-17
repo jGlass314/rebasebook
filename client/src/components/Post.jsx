@@ -25,7 +25,6 @@ class Post extends React.Component {
   getLikeAmount() {
     axios.get(`/api/likes`, { params: { 'text': this.props.post.post_text }})
       .then((res) => {
-        // console.log('This is the number of likes', res.data.length);
         this.setState({
           likeCount: res.data.length
         })
@@ -39,21 +38,17 @@ class Post extends React.Component {
   }
   executeToggleLike() {
     let username = this.props.name;
-    // console.log('liked.........', username);
     // Get the author's username
     axios.get(`/api/${username}/post/author`, { params: { 'text': this.props.post.post_text }})
       .then((author) => {
-        // console.log('author', author.data[0].username);
         // Get the number of times you have liked the post
         axios.get(`/api/${username}/likes`, { params: { 'text': this.props.post.post_text }})
           .then((count) => {
             let personalLikeCount = count.data[0].count;
-            // console.log(`${username} has liked this post ${personalLikeCount} times`);
             // If you haven't liked it yet
             if (personalLikeCount < 1) {
               axios.post(`/api/likes/${author.data[0].username}`, { 'text': this.props.post.post_text, 'username': username })
                 .then((res) => {
-                  // console.log(`${username} has liked the post!`);
                   this.getLikers();
                   this.getLikeAmount();
                 })
@@ -63,7 +58,6 @@ class Post extends React.Component {
             } else { // Time to unlike!
               axios.delete(`/api/likes/${author.data[0].username}`, { params: { 'text': this.props.post.post_text, 'username': username }})
                 .then((res) => {
-                  // console.log(`${username} has unliked the post!`);
                   this.getLikers();
                   this.getLikeAmount();
                 })
@@ -83,7 +77,6 @@ class Post extends React.Component {
   handleClickedProfile() {
     axios.get(`/api/${this.props.post.first_name}/${this.props.post.last_name}`)
       .then((res) => {
-        // console.log('This is the username', res);
         if (this.state.clickedUsername !== this.props.name) {
           this.setState({
             clickedUsername: res.data[0].username
@@ -111,7 +104,6 @@ class Post extends React.Component {
             this.setState({
               profilePicUrl: info.data[0] && info.data[0].user_data.profile_picture
             })
-            console.log('This is the profile info', info);
           })
           .catch((err) => {
             console.error(err);
@@ -124,12 +116,10 @@ class Post extends React.Component {
   getLikers() {
     axios.get('/api/likers', { params: { 'text': this.props.post.post_text }})
       .then((likers) => {
-        // console.log('Got all likers', likers);
         let likerStr = ''
         likers.data.map((liker) => {
           likerStr += `${liker.first_name} ${liker.last_name}<br>`
         })
-        // console.log(likerStr);
         this.setState({
           likers: likerStr
         })
@@ -139,12 +129,8 @@ class Post extends React.Component {
       })
   }
   render() {
-    // console.log('post owner',this.props.post.first_name);
-    // console.log('logged in name', this.props.name)
-    // console.log('this is missing on own profile', this.state.clickedUsername)
 
     let clickedProfilePath = '/' + this.state.clickedUsername + '/profile/' + this.props.name;
-   // console.log(clickedProfilePath);
     if (this.state.redirect) {
       return <Redirect push to={clickedProfilePath} />;
     }

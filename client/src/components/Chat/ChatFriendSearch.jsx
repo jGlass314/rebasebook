@@ -1,29 +1,30 @@
 import _ from 'lodash'
-import React, { Component } from 'react'
-import { Search, Grid, Header } from 'semantic-ui-react'
+import React from 'react'
+import { Search } from 'semantic-ui-react'
+import http from 'axios';
 
-const source = _.times(5, () => ({
-  title: faker.company.companyName(),
-  description: faker.company.catchPhrase(),
-  image: faker.internet.avatar(),
-  price: faker.finance.amount(0, 100, 2, '$'),
-}))
-
-class ChatFriendSearch extends Component {
+class ChatFriendSearch extends React.Component {
   
+  constructor() {
+    super();
+
+    this.handleResultSelect = this.handleResultSelect.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+  }
   componentWillMount() {
     this.resetComponent()
   }
 
   componentDidMount() {
-    //this.getAllUsers();
-    //console.log(this.state)
+    this.getAllUsers();
+    console.log(this.state)
   }
 
   getAllUsers() {
     //var user = this.state.username;
-    axios.get(`/api/search/users`)
+    http.get(`/api/search/users`)
       .then((response) => {
+        console.log('Response back from /search ', response);
         let searchNames = response.data.map(function (user) {
           return {
             "title": user.first_name + ' ' + user.last_name,
@@ -39,21 +40,23 @@ class ChatFriendSearch extends Component {
       });
   }
 
-  resetComponent = () => (
+  resetComponent() {
     this.setState({ 
       isLoading: false, 
       results: [], 
       value: '' 
     })
-  );
+  };
 
-  handleResultSelect = (e, { result }) => (
+  handleResultSelect(e, { result }) {
     this.setState({ 
       value: result.title 
-    })
-  );
+    });
 
-  handleSearchChange = (e, { value }) => {
+    this.props.onSelect(result.title);
+  };
+
+  handleSearchChange(e, { value }) {
 
     this.setState({ 
       isLoading: true, 
@@ -68,7 +71,7 @@ class ChatFriendSearch extends Component {
 
       this.setState({
         isLoading: false,
-        results: _.filter(source, isMatch),
+        results: _.filter(this.state.source, isMatch),
       })
     }, 500)
   }
@@ -77,24 +80,16 @@ class ChatFriendSearch extends Component {
     const { isLoading, value, results } = this.state
 
     return (
-      <Grid>
-        <Grid.Column width={8}>
-          <Search
-            loading={isLoading}
-            onResultSelect={this.handleResultSelect}
-            onSearchChange={this.handleSearchChange}
-            results={results}
-            value={value}
-            {...this.props}
-          />
-        </Grid.Column>
-        <Grid.Column width={8}>
-          <Header>State</Header>
-          <pre>{JSON.stringify(this.state, null, 2)}</pre>
-          <Header>Options</Header>
-          <pre>{JSON.stringify(source, null, 2)}</pre>
-        </Grid.Column>
-      </Grid>
+      <Search
+        loading={isLoading}
+        onResultSelect={this.handleResultSelect}
+        onSearchChange={this.handleSearchChange}
+        results={results}
+        value={value}
+        {...this.props}
+      />
     )
   }
 }
+
+export default ChatFriendSearch;

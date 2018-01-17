@@ -29,7 +29,6 @@ class UserList extends React.Component {
   }
   render() {
     const { value } = this.state.selectedUser;
-    console.log(value);
     return (
       <div>
         <Dropdown onChange={this.selectUser.bind(this)} placeholder='Select Country' fluid search selection options={this.state.userList} value={value}/>

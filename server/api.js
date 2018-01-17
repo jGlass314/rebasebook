@@ -10,7 +10,6 @@ const api = {
         if (err) {
           res.status(500).send(err);
         } else {
-          console.log('success: ', data);
           res.status(200).json(data);
         }
       });
@@ -23,28 +22,22 @@ const api = {
         if (err) {
           res.status(500).send(err);
         } else {
-          console.log('returned data', data)
-          // console.log('data.......', data['0'].user_data.work);
           res.status(200).json(data);
         }
       });
     },
 
     getLiked: function (req, res) {
-      console.log('Getting number of personal likes!');
-      // console.log('Getting likes for post with this text', req.query.text);
       db.getPersonalLikeAmount(req.params.username, req.query.text, (err, data) => {
         if (err) {
           res.status(500).send(err);
         } else {
-          console.log('Successfully got personal like count', data);
           res.status(200).json(data);
         }
       })
     },
 
     getLikers: function (req, res) {
-      console.log('Getting all likers!');
 
       db.getLikers(req.query.text, (err, data) => {
         if (err) {
@@ -56,14 +49,12 @@ const api = {
     },
 
     getUser: function(req, res) {
-      console.log('inside get username');
       var username = req.params.username;
       if (username !== 'favicon.ico') {
         db.getUser(username, (err, data) => {
           if (err) {
             res.status(500).send(err);
           } else {
-            // console.log('data from /username route', data);
             res.status(200).json(data);
           }
         })
@@ -71,7 +62,6 @@ const api = {
     },
 
     getUsername: function(req, res) {
-      // console.log('Querying by first and last name');
       db.getUsername(req.params.firstname, req.params.lastname, (err, data) => {
         if (err) {
           res.status(404).send(err);
@@ -94,7 +84,6 @@ const api = {
           if (err) {
             res.status(500).json(err);
           } else {
-            // res.status(200).json(data);
             db.addNewUserProfileInfo(newUserData.username, (err, data) => {
               if (err) {
                 res.status(404).send(err);
@@ -146,7 +135,6 @@ const api = {
     updateProfile: function(req, res) {
       var username = req.params.username;
       var changes = req.body;
-      console.log('sending request to database...');
       db.updateProfilePageInfo(username, changes, (err, data) => {
         if (err) {
           res.status(500).send(err);
@@ -234,14 +222,11 @@ const api = {
   users: {
 
     getUsers: function (req, res) {
-      // console.log("GETTING ALL FRIENDS POSTS");
       db.getAllUsers((err, data) => {
-        // console.log("Error", err, "data", data);
         if (err) {
-          console.log('This is my error', err);
-          res.sendStatus(404);
+          console.log(err.message);
+          res.send(400).send('Unable to retrieve all Users');
         } else {
-          // console.log('This is my data', data);
           res.status(200).json(data);
         }
       });
@@ -251,13 +236,10 @@ const api = {
   post: {
 
     createPost: function(req, res) {
-      // console.log(req.params.username);
-      // console.log(req.body.text);   
       db.createPost(req.params.username, req.body.text, (err, data) => {
         if (err) {
-          console.log(res);
-          console.log('This is my error', err);
-          res.sendStatus(404);
+          console.log(err.message);
+          res.send(400).send('Unable to create Post');
         } else {
           res.status(200).json(data);
         }
@@ -267,7 +249,7 @@ const api = {
     getAuthor: function(req, res) {
       db.getPostAuthor(req.query.text, (err, data) => {
         if (err) {
-          res.status(404).send(err);
+          res.status(400).send('Unable to retrieve author of Post');
         } else {
           res.status(200).json(data);
         }
@@ -275,47 +257,35 @@ const api = {
     },
 
     unlikePost: function (req, res) {
-      console.log('Are you unliking');
-      // console.log(req.params.author);
-      // console.log(req.query.text);
-      // console.log(req.query.username);
+
       db.unlikePost(req.params.author, req.query.text, req.query.username, (err, data) => {
         if (err) {
-          console.log(res);
-          console.log('This is my error', err);
-          res.sendStatus(404);
+          console.log(err.message);
+          res.send(400).send('Unable to unlike post');
         } else {
-          console.log('This is my data', data);
           res.status(200).json(data);
         }
       })
     },
 
     likePost: function(req, res) {
-      console.log('Are you liking');
-      // console.log(req.params.author);
-      // console.log(req.body.text);
-      // console.log(req.body.username)
+
       db.likePost(req.params.author, req.body.text, req.body.username, (err, data) => {
         if (err) {
-          console.log(res);
-          console.log('This is my error', err);
-          res.sendStatus(404);
+          console.log(err.message);
+          res.send(400).send('Unable to like Post');
         } else {
-          console.log('This is my data', data);
           res.status(200).json(data);
         }
       })
     },
 
     getNumLikes: function (req, res) {
-      console.log('Getting number of likes!');
-      // console.log('Getting likes for post with this text', req.query.text);
       db.getLikeAmount(req.query.text, (err, data) => {
         if (err) {
-          res.status(500).send(err);
+          console.log(err.message);
+          res.status(400).send('Unable to retrieve number of likes');
         } else {
-          console.log('Successfully got like count', data);
           res.status(200).json(data);
         }
       })
@@ -325,55 +295,45 @@ const api = {
   posts: {
 
     getPosts: function (req, res) {
-      // console.log("getting all posts");
       db.getAllPosts((err, data) => {
-        // console.log("Error", err, "data", data);
         if (err) {
-          console.log('This is my error', err);
-          res.sendStatus(404);
+          console.log(err.message);
+          res.send(400).send('Unable to retrieve all Posts');
         } else {
-          // console.log('This is my data', data);
           res.status(200).json(data);
         }
       })
     },
       
     getUserPosts: function(req, res) {
-      // console.log('username...', req.params.certainUser);
       db.getUserPosts(req.params.certainUser, (error, data) => {
         if (error) {
-          console.log(`error retrieving ${req.params.certainUser}'s posts`, error);
+          console.log(error.message);
+          res.status(400).send(`Error retrieving ${req.params.certainUser}'s posts`);
         } else {
-          console.log('data....', data);
           res.status(200).json(data);
         }
       });
     },
 
     getFriendsPosts: function (req, res) {
-      console.log("GETTING ALL FRIENDS POSTS", req.params.username);
       db.findPostsByFriends(req.params.username, (err, data) => {
-        // console.log("Error", err, "data", data);
         if (err) {
-          console.log('This is my error', err);
-          res.sendStatus(404);
+          console.log(err.message);
+          res.status(400).send(`Unable to retrieve Posts by ${req.params.username}`);
         } else {
-          console.log('This is my data', data);
           res.status(200).json(data);
         }
       })
     },
 
     getNonFriendsPosts: function (req, res) {
-      // console.log("GETTING ALL NON FRIENDS POSTS");
-      // console.log('NON FRIENDS USERNAME', req.params.username)
+
       db.findPostsByNonFriends(req.params.username, (err, data) => {
-        // console.log("Error", err, "data", data);
         if (err) {
-          console.log('This is my error', err);
-          res.sendStatus(404);
+          console.log(err.message);
+          res.status(400).send('Unable to retrieve Posts by Non Friends');
         } else {
-          // console.log('This is my data', data);
           res.status(200).json(data);
         }
       })
