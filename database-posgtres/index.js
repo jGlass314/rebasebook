@@ -7,6 +7,15 @@ const client = new Client({
 console.log('Database URL at: ', databaseUrl);
 
 client.connect();
+
+
+require('dotenv').config();
+const knex = require('knex') ({
+    client: 'pg',
+    connection: process.env.DATABASE_URL,
+    pool: { min: 0, max: 7 }
+  });
+
 module.exports = {
   getAllUsers: (callback) => {
     client.query('SELECT * FROM users;', (err, res) => {
@@ -366,7 +375,14 @@ module.exports = {
         callback(null, res.rows);
       }  
     });
-  }
+  },
+
+  getFriendship: () => {
+
+  },
+
+
+
 }
 
 // SELECT posts.*, users.first_name, users.last_name FROM posts INNER JOIN users ON posts.user_id = users.id WHERE posts.id IN (SELECT users.id FROM USERS WHERE users.id NOT IN (SELECT user_friends.friend_id FROM user_friends WHERE user_friends.username = 'mattupham')) ORDER BY posts.id DESC;

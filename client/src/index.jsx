@@ -40,25 +40,7 @@ class App extends React.Component {
   }
   render() {
     return (
-      <div>
-
-        {/* <Feed /> */}
-        {/* { this.state.view === 'profile' ? <Profile /> : <PostList /> }
-        <br />
-        <PostList /> */}
-        <Main getProfile={this.getProfile.bind(this)} />
-        {/* <Header /> */}
-        {/* <SignIn /> */}
-        {/* { this.state.view === 'feed' ? <PostList /> : <Profile /> } */}
-        <br />
-
-        {(this.state.feed) ? <Profile 
-                                  username={this.state.username}
-                                  name={this.state.name} 
-                                  picture_url={this.state.picture_url} 
-                                  getProfile={this.getProfile.bind(this)}
-                                /> : null}
-      </div>
+      <Main getProfile={this.getProfile.bind(this)} />
     )
   }
 }

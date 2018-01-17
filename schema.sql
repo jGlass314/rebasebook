@@ -40,6 +40,16 @@ CREATE TABLE user_friends (
 INSERT INTO user_friends (username, friend_id) VALUES ('mattupham', 2);
 INSERT INTO user_friends (username, friend_id) VALUES ('albertchanged', 1);
 
+CREATE TABLE users_friendships (
+    id SERIAL PRIMARY KEY UNIQUE,
+    user_id_from INT REFERENCES USERS(id),
+    user_id_to INT REFERENCES USERS(id),
+    state varchar(20),
+    created_at timestamp DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO user_friendships (user_id_from, user_id_to, state) VALUES (1, 2, 'request');
+
 CREATE TABLE user_posts_liked (
     id SERIAL PRIMARY KEY NOT NULL UNIQUE,
     user_id INTEGER REFERENCES users(id),
