@@ -28,12 +28,12 @@ let includesUserInFriendship = function(queryBuilder, userId) {
 };
 
 module.exports = {
-  getAllUsers: (callback) => {
-    client.query('SELECT * FROM users;', (err, res) => {
-      if (err) callback(err, null);
-      callback(null, res.rows);
-    });
-  },
+  // getAllUsers: (callback) => {
+  //   client.query('SELECT * FROM users;', (err, res) => {
+  //     if (err) callback(err, null);
+  //     callback(null, res.rows);
+  //   });
+  // },
   updateProfilePageInfo: (username, change, callback) => {
     var edit = {};
     edit[change[0]] = change[1];
@@ -170,7 +170,7 @@ module.exports = {
   getUser: (username, callback) => {
     client.query(`SELECT * FROM users WHERE username='${username}';`, (err, res) => {
       if (err) {
-        console.log('Error', err)
+        console.log('Error in getUser', err)
         callback(err, null);
       } else {  
         callback(null, res.rows);
@@ -396,7 +396,7 @@ module.exports = {
           // If userId is responding to a pending request, or changing a previous decline,
           // change the existing query to 'friend' and add new entry 
           newConnection.state = 'friend';
-
+          let usersFriendshipsId = undefined;
           // change existing to friended and add new entry
           return pg.transaction((trx) => {
             pg.insert(newConnection)
@@ -409,6 +409,46 @@ module.exports = {
                   .update({'state': 'friend'})
                   .into('users_friendships')
               })
+              // TODO: Implement notification of friendship accepted
+              .then(() => {
+                /*
+                * select n.id, friendships_id
+                * from notifications n
+                * join notifications_friendships nf on (n.id=nf.notifications_id)
+                * if empty set
+                *   select uf.id uf_id
+                *   from users_friendships uf where uf.user_id_to=f_id;
+                *   insert into notifications (user_id) values (user.id) returning id;
+                *   insert into notifications_friendships (notification_id, friendships_id) values (id, uf_id);
+                */
+                return pg.select('id, friendships_id')
+                  .from('notifications')
+                  .innerJoin('notifications_friendships', 'notifications.id', 'notifications_friendships.notifications_id')
+              })
+              .then(rows => {
+                if(!rows.length) {
+                  return pg.select('users_friendships.id as uf_id')
+                    .from('users_friendships')
+                    .where({'uf_id': friendId})
+                }
+              })
+              .then(rows => {
+                usersFriendshipsId = rows.length && rows[0].uf_id;
+                console.log('users_friendships.id:', usersFriendshipsId);
+                return pg.insert({'user_id',: userId})
+                  .into('notifications')
+                  .returning(id)
+                  .transacting(trx)
+              })
+              .then(notificationsId => {
+                return pg.insert({'notifications_id': notificationsId, 'friendships_id': usersFriendshipsId})
+                  .into('notifications_friendships')
+                  .transacting(trx)
+              })
+
+              // TODO: Implement socket.io sending to requestor (userId) updating notificaitons
+
+
               .then(trx.commit)
               .catch(trx.rollback);
           })
@@ -418,6 +458,11 @@ module.exports = {
           newConnection.state = 'request';
           return pg('users_friendships')
             .insert(newConnection)
+            // TODO: Implement notificaiton of friendship requested
+
+
+            // TODO: Implement socket.io sending to friend requested (friendId) updating notificaitons
+
         }
       });
   },
