@@ -16,7 +16,7 @@ class Profile_friends extends React.Component {
     this.props.getFriendName(event.target.id);
   }
   render() {
-    let friendUrl = '/' + this.props.friend + '/profile/' + this.props.user;
+    let friendUrl = '/profile' + this.props.friend;
 
     return (
       <div className={this.props.view === 'Timeline' ? "friendsList" : "hide"}>

@@ -21,13 +21,14 @@ class Profile extends React.Component {
       posts: [],
       friends: [],
       friend: false,
-      username: props.match.params.friendname, // not an error, do not change
-      profilePageOwner: props.match.params.username, // not an error, do not change
+      username: props.loggedInUsername, // not an error, do not change
       profilePageInfo: '',
       isOwner: true,
-      userInfo: {},
+      profileInfo: {},
       view: 'Timeline',
-      clickedFriend: ''
+      clickedFriend: '',
+      profilePageOwner: props.match.params.friendname, // not an error, do not change
+      loggedInUserId: props.loggedInUserId
     }
   }
 
@@ -40,8 +41,15 @@ class Profile extends React.Component {
   }  
 
   componentWillReceiveProps(nextProps) {
+<<<<<<< HEAD
     if (nextProps.location.pathname !== this.props.location.pathname) {
 
+=======
+
+    if (nextProps.location.pathname !== this.props.location.pathname) {
+      // console.log('Yes it is different');
+      // console.log(nextProps.match.params.friendname);
+>>>>>>> profile page and friendship in progress
       this.setState({
         profilePageOwner: nextProps.match.params.friendname
       });
@@ -57,8 +65,8 @@ class Profile extends React.Component {
     axios.get(`/api/${user}`)
       .then((responseUserInfo) => {
         this.setState({
-          userInfo: responseUserInfo.data[0],
-          isOwner: this.state.username === user
+          profileInfo: responseUserInfo.data[0],
+          isOwner: this.state.loggedInUsername === user
         });
       })
       .catch((error) => {
@@ -80,7 +88,7 @@ class Profile extends React.Component {
   }
 
   getUserPosts(user) {
-    var username = this.state.username;
+    var username = this.state.loggedInUsername;
     axios.get(`/api/${username}/posts/${user}`)
       .then((response) => {
         this.setState({
@@ -93,7 +101,22 @@ class Profile extends React.Component {
   }
 
   getFriends(user) {
-    var username = this.state.username;
+    let username = this.state.loggedInUsername;
+    let profileId = this.state.profileInfo.id;
+    let params = {
+      userId: profileId,
+      type: 'friend'
+    }
+
+    axios.get('api/friend_list', {params: params})
+      .then((friendlist) => {
+        console.log('friendlist on page', friendList);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+
     // var otherUsername = user;
     axios.get(`/api/${username}/friendsList/${user}`)
       .then((response) => {
@@ -119,7 +142,7 @@ class Profile extends React.Component {
   }
 
   addFriend() {
-    var username = this.state.username;
+    var username = this.state.loggedInUsername;
     var friendToAdd = this.state.profilePageOwner;
     axios.post(`/api/${username}/addFriend/${friendToAdd}`)
       .then((response) => {
@@ -131,7 +154,7 @@ class Profile extends React.Component {
   } 
 
   removeFriend() {
-    var username = this.state.username;
+    var username = this.state.loggedInUsername;
     var friendToRemove = this.state.profilePageOwner;
     axios.post(`/api/${username}/removeFriend/${friendToRemove}`)
       .then((response) => {
@@ -149,7 +172,7 @@ class Profile extends React.Component {
   }
 
   updateProfile(changes) {
-    var username = this.state.username;
+    var username = this.state.loggedInUsername;
     axios.patch(`/api/${username}/updateProfile`, changes)
       .then((response) => {
         this.getUserProfileInfo(this.state.profilePageOwner);
@@ -168,14 +191,42 @@ class Profile extends React.Component {
   render() {
     return (
       <div className="profile">
-        <Profile_backgroundAndProfilePic userInfo={this.state.userInfo} friend={this.state.friend} addFriend={this.addFriend.bind(this)} removeFriend={this.removeFriend.bind(this)} isOwner={this.state.isOwner} profilePageInfo={this.state.profilePageInfo} />
-        <Profile_navigation handleNavigation={this.handleNavigation.bind(this)} view={this.state.view} />
-        <Profile_about view={this.state.view} profilePageInfo={this.state.profilePageInfo} updateProfile={this.updateProfile.bind(this)} isOwner={this.state.isOwner} />
-        <Profile_allFriends view={this.state.view} friends={this.state.friends} />
-        <Profile_intro view={this.state.view} profilePageInfo={this.state.profilePageInfo} />
-        <Profile_friends friend={this.state.clickedFriend} getFriendName={this.getFriendName.bind(this)} friends={this.state.friends} view={this.state.view} owner={this.state.profilePageOwner} user={this.state.username} />
-        <Profile_photos view={this.state.view} />
-        <Profile_postSection getUserPosts={this.getUserPosts.bind(this)} username={this.state.profilePageOwner} posts={this.state.posts} view={this.state.view} isOwner={this.state.isOwner} />
+        <Profile_backgroundAndProfilePic 
+          userInfo={this.state.profileInfo}
+          friend={this.state.friend}
+          addFriend={this.addFriend.bind(this)}
+          removeFriend={this.removeFriend.bind(this)}
+          isOwner={this.state.isOwner}
+          profilePageInfo={this.state.profilePageInfo} />
+        <Profile_navigation
+          handleNavigation={this.handleNavigation.bind(this)}
+          view={this.state.view} />
+        <Profile_about
+          view={this.state.view}
+          profilePageInfo={this.state.profilePageInfo}
+          updateProfile={this.updateProfile.bind(this)}
+          isOwner={this.state.isOwner} />
+        <Profile_allFriends
+          view={this.state.view}
+          friends={this.state.friends} />
+        <Profile_intro
+          view={this.state.view}
+          profilePageInfo={this.state.profilePageInfo} />
+        <Profile_friends
+          friend={this.state.clickedFriend}
+          getFriendName={this.getFriendName.bind(this)}
+          friends={this.state.friends}
+          view={this.state.view}
+          owner={this.state.profilePageOwner}
+          user={this.state.username} />
+        <Profile_photos 
+          view={this.state.view} />
+        <Profile_postSection 
+          getUserPosts={this.getUserPosts.bind(this)} 
+          username={this.state.profilePageOwner} 
+          posts={this.state.posts} 
+          view={this.state.view} 
+          isOwner={this.state.isOwner} />
       </div>
     );
   }

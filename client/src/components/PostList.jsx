@@ -32,6 +32,8 @@ class PostList extends React.Component {
             <div key={index}>
               <Post
                 post={post}
+                authorId = {post.user_id}
+                authorUsername= {post.username}
                 name={this.props.name}
               />
               <br />

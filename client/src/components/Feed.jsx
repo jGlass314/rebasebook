@@ -68,26 +68,10 @@ class Feed extends React.Component {
               <Icon name='user' />
               {this.props.match.params.username}
             </Button>
-            <Button icon labelPosition='left' fluid className="feedSideBarUserButton">
-              <Icon name='browser' />
-              Feed
-            </Button>
-            <Button icon labelPosition='left' fluid className="feedSideBarUserButton">
-              <Icon name='mail outline' />
-              Messages
-            </Button>
-            <Button icon labelPosition='left' fluid className="feedSideBarUserButton">
-              <Icon name='video play outline' />
-              Watch
-            </Button>
-            <Button icon labelPosition='left' fluid className="feedSideBarUserButton">
-              <Icon name='shop' />
-              Marketplace
-            </Button>
           </div>
 
           <div className="exploreTag">Explore</div>
-            
+          
           <div className = "feedSidebarExplore" >
             <Button icon labelPosition='left' fluid className="feedSideBarUserButton">
               <Icon name='calendar' />
@@ -101,6 +85,7 @@ class Feed extends React.Component {
               <Icon name='group' />
               Friends
             </Button>
+            
             <Button icon labelPosition='left' fluid className="feedSideBarUserButton">
               <Icon name='bookmark' />
               Saved

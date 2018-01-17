@@ -14,7 +14,9 @@ class Post extends React.Component {
       redirect: false,
       likers: '',
       personalLikeCount: 0,
-      profilePicUrl: ''
+      profilePicUrl: '',
+      authorUsername: props.authorUsername,
+      authorId: props.authorId
     };
   }
   componentDidMount() {
@@ -74,33 +76,19 @@ class Post extends React.Component {
         console.error('Error', err);
       })
   }
-  handleClickedProfile() {
-    axios.get(`/api/${this.props.post.first_name}/${this.props.post.last_name}`)
-      .then((res) => {
-        if (this.state.clickedUsername !== this.props.name) {
-          this.setState({
-            clickedUsername: res.data[0].username
-          })
-        } else {
-          this.setState({
-            clickedUsername: this.props.name
-          })
-        }
-      })
-      .catch((err) => {
-        console.error('This is the error', err);
-      })
+
+  handleClickedProfile(profileUsername) {
     this.setState({
+      clickedUsername: this.props.authorUsername,
       redirect: true
     })
   }
+
   getProfileInfo() {
     axios.get(`/api/${this.props.post.first_name}/${this.props.post.last_name}`)
       .then((username) => {
-        console.log('username here', username);
         axios.get(`/api/${username.data[0].username}/profilePage`)
           .then((info) => {
-            console.log('info here:', info)
             this.setState({
               profilePicUrl: info.data[0] && info.data[0].user_data.profile_picture
             })
@@ -130,7 +118,7 @@ class Post extends React.Component {
   }
   render() {
 
-    let clickedProfilePath = '/' + this.state.clickedUsername + '/profile/' + this.props.name;
+    let clickedProfilePath = '/profile/' + this.state.clickedUsername;
     if (this.state.redirect) {
       return <Redirect push to={clickedProfilePath} />;
     }
@@ -142,7 +130,8 @@ class Post extends React.Component {
               <img className="postPic" src={this.state.profilePicUrl}/>
               <div className="postBody">
                 <p className="postName">
-                  <strong><span className="nameLink" onClick={this.handleClickedProfile.bind(this)}><a>{this.props.post.first_name}&nbsp;{this.props.post.last_name}</a></span></strong>
+                  <strong>
+                    <span className="nameLink" onClick={this.handleClickedProfile.bind(this)}><a>{this.props.post.first_name}&nbsp;{this.props.post.last_name}</a></span></strong>
                   <br /><span className="postTimestamp">{moment(this.props.post.post_timestamp).fromNow()}</span>
                 </p>
               </div>
