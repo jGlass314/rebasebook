@@ -7,6 +7,7 @@ import Profile from './components/Profile.jsx';
 import Header from './components/Header.jsx';
 import SignIn from './components/SignIn.jsx';
 import axios from 'axios';
+import ChatWindow from './components/Chat/ChatWindow.jsx';
 
 class Main extends React.Component {
   constructor(props) {
@@ -32,6 +33,24 @@ class Main extends React.Component {
     })
 
     this.getFriendRequests(userData.id);
+  }
+  
+  getProfile(user) {
+    axios.get(`/api/${user}`) 
+    .then((res) => {
+      console.log('Res ',res);
+      this.setState({
+        view: 'profile',
+        name: res.data[0].first_name + ' ' + res.data[0].last_name,
+        picture_url: res.data[0].picture_url,
+        username: res.data[0].username,
+        userId: res.data[0].id
+      })
+
+    })
+    .catch((err) => {
+      console.error('err: ', err);
+    })
   }
 
   setUsername(username) {
@@ -77,6 +96,7 @@ class Main extends React.Component {
   }
 
   render() {
+    console.log('params ', this.props);
     return (
       <main>
         <div>

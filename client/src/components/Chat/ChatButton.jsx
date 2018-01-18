@@ -1,12 +1,30 @@
 import React from 'react';
-import { Button } from 'semantic-ui-react';
+import { Button, MenuItem } from 'semantic-ui-react';
 
-const ChatButton = (props) => (
-  <Button 
-    className='chatbutton' 
-    icon='comments'
-    onClick={this.props.onClick} >
-  </Button> 
-);
+
+class ChatButton extends React.Component {
+  constructor(props) {
+    super(props);
+
+    console.log('Button Props ', props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+  
+  handleClick() {
+    console.log('button clicks');
+    this.props.handleClick();
+  }
+  render() {
+
+    return (
+      <Button 
+        className='chatbutton' 
+        icon='comments'
+        onClick={this.handleClick} >
+      </Button> 
+    );
+  }
+}
 
 export default ChatButton;
