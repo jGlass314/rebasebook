@@ -4,8 +4,9 @@ CREATE DATABASE therebasebook;
 \c therebasebook;
 
 -- SERIAL- adds not null constraint, should increment by 1 for each new entry
+DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY NOT NULL UNIQUE,
+    id SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR (25) NOT NULL UNIQUE,
     first_name VARCHAR (25),
     last_name VARCHAR (25),
@@ -18,8 +19,9 @@ INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('rayang
 INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('kmenghini', 'Kaitlyn', 'Menghini', 'https://lh4.ggpht.com/4nDELzdauqt2pyNaf-JI-ZDo6Ur87KgtQi9ASUaQF-l8qMIfufBXz0FLh1BV5oxGbDw=h900');
 INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('sjain', 'Shubhra', 'Jain', 'https://petcube.com/blog/content/images/2017/04/kitten-supplies-cover-1.jpg');
 
+DROP TABLE IF EXISTS posts CASCADE;
 CREATE TABLE posts (
-    id SERIAL PRIMARY KEY NOT NULL UNIQUE,
+    id SERIAL PRIMARY KEY NOT NULL,
     user_id INTEGER REFERENCES users(id) NOT NULL,
     post_text VARCHAR (1000) NOT NULL,
     post_timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -31,6 +33,7 @@ INSERT INTO posts (user_id, post_text) VALUES (3, 'ryan ngo post');
 INSERT INTO posts (user_id, post_text) VALUES (4, 'kaitlyn menghini post');
 INSERT INTO posts (user_id, post_text) VALUES (5, 'shubhra jain post');
 
+DROP TABLE IF EXISTS user_friends CASCADE;
 CREATE TABLE user_friends (
     id SERIAL PRIMARY KEY UNIQUE,
     username VARCHAR(25) REFERENCES users(username) NOT NULL,
@@ -40,6 +43,7 @@ CREATE TABLE user_friends (
 INSERT INTO user_friends (username, friend_id) VALUES ('mattupham', 2);
 INSERT INTO user_friends (username, friend_id) VALUES ('albertchanged', 1);
 
+DROP TABLE IF EXISTS users_friendships CASCADE;
 CREATE TABLE users_friendships (
     id SERIAL PRIMARY KEY UNIQUE,
     user_id_from INT REFERENCES USERS(id),
@@ -48,8 +52,9 @@ CREATE TABLE users_friendships (
     created_at timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO user_friendships (user_id_from, user_id_to, state) VALUES (1, 2, 'request');
+INSERT INTO users_friendships (user_id_from, user_id_to, state) VALUES (1, 2, 'request');
 
+DROP TABLE IF EXISTS user_posts_liked CASCADE;
 CREATE TABLE user_posts_liked (
     id SERIAL PRIMARY KEY NOT NULL UNIQUE,
     user_id INTEGER REFERENCES users(id),
@@ -58,6 +63,7 @@ CREATE TABLE user_posts_liked (
 
 INSERT INTO user_posts_liked (user_id, post_id) VALUES (2, 1);
 
+DROP TABLE IF EXISTS user_profiles CASCADE;
 CREATE TABLE user_profiles (
     id SERIAL PRIMARY KEY NOT NULL UNIQUE,
     user_id INTEGER REFERENCES users(id),
@@ -127,4 +133,43 @@ INSERT INTO user_profiles (user_id, user_data) VALUES (3,
     "relationship_status": "Single", 
     "birthday": "February 10, 2017"
   }'
-);      
+);
+
+  DROP TABLE IF EXISTS CHATS CASCADE;
+  CREATE TABLE CHATS (
+    id SERIAL PRIMARY KEY,
+    user_1 INT REFERENCES USERS(id), -- make this an index
+    user_2 INT REFERENCES USERS(id) -- make this an index
+  );
+
+  DROP TABLE IF EXISTS MESSAGES CASCADE;
+  CREATE TABLE MESSAGES (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    chat_id INT REFERENCES CHATS(id), -- make this an index
+    text VARCHAR(1000) NOT NULL,
+    author_id INT REFERENCES USERS(id)
+  );
+
+  DROP TABLE IF EXISTS NOTIFICATIONS CASCADE;
+  CREATE TABLE NOTIFICATIONS (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    user_id INT REFERENCES USERS(id),
+    seen BOOLEAN NOT NULL DEFAULT FALSE
+  );
+
+  DROP TABLE IF EXISTS NOTIFICATIONS_FRIENDSHIPS CASCADE;
+  CREATE TABLE NOTIFICATIONS_FRIENDSHIPS (
+    id SERIAL PRIMARY KEY,
+    notifications_id INT REFERENCES NOTIFICATIONS(id),
+    friendships_id INT REFERENCES USERS_FRIENDSHIPS(id)
+  );
+
+  DROP TABLE IF EXISTS NOTIFICATIONS_MESSAGES CASCADE;
+  CREATE TABLE NOTIFICATIONS_MESSAGES (
+    id SERIAL PRIMARY KEY,
+    notifications_id INT REFERENCES NOTIFICATIONS(id),
+    messages_id INT REFERENCES MESSAGES(id),
+    read BOOLEAN NOT NULL DEFAULT FALSE
+  );

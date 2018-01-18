@@ -1,6 +1,8 @@
 const { Client } = require('pg');
-let databaseUrl =  process.env.DATABASE_URL || 'postgres://localhost/therebasebook';
+require('dotenv').config();
 
+console.log('Initializing client');
+let databaseUrl =  process.env.DATABASE_URL;
 const client = new Client({
   connectionString: databaseUrl
 });
@@ -168,7 +170,7 @@ module.exports = {
   getUser: (username, callback) => {
     client.query(`SELECT * FROM users WHERE username='${username}';`, (err, res) => {
       if (err) {
-        console.log('Error', err)
+        console.log('Error in getUser', err)
         callback(err, null);
       } else {  
         callback(null, res.rows);
@@ -394,7 +396,10 @@ module.exports = {
           // If userId is responding to a pending request, or changing a previous decline,
           // change the existing query to 'friend' and add new entry 
           newConnection.state = 'friend';
-
+          let insertQueryInfo = {
+            usersFriendshipsId: undefined
+          };
+          
           // change existing to friended and add new entry
           return pg.transaction((trx) => {
             pg.insert(newConnection)
@@ -408,14 +413,76 @@ module.exports = {
                   .into('users_friendships')
               })
               .then(trx.commit)
+              // add notification to requestor
+              .then(() => {
+                return pg.select('id')
+                .from('users_friendships')
+                .where('user_id_to', userId)
+                .andWhere('user_id_from', friendId)
+              })
+              .then((rows) => {
+                insertQueryInfo.usersFriendshipsId = rows[0].id;
+                return pg.insert({'user_id': friendId})
+                .into('notifications')
+                .returning('id')
+              })
+              .then(notificationsId => {
+                return pg.insert({
+                  'notifications_id': notificationsId[0],
+                  'friendships_id': insertQueryInfo.usersFriendshipsId
+                })
+                .into('notifications_friendships')
+              })
+              // mark notification to the requestee as 'seen'
+              .then(() => {
+                return pg.column(
+                  {notificationsId: 'notifications.id'}
+                )
+                .select()
+                .from('users_friendships')
+                .innerJoin('notifications_friendships', 'users_friendships.id', 'notifications_friendships.friendships_id')
+                .innerJoin('notifications', 'notifications.id', 'notifications_friendships.notifications_id')
+                // these must be reversed because this is a friendship request in the reverse direction
+                .where('users_friendships.user_id_from', friendId)
+                .andWhere('users_friendships.user_id_to', userId)
+              })
+              .then(rows => {
+                return pg('notifications')
+                .update('seen', 'true')
+                .where('id', rows[0].notificationsId)
+              })
+
+              // TODO: Implement socket.io sending to requestor (userId) updating notificaitons
+              // TODO: Implement socket.io sending to requestee (friendId) decrementing badge counter
               .catch(trx.rollback);
           })
         } else if (results === null) {
           // If no existing relationship, just add a new entry from user to friend
 
           newConnection.state = 'request';
-          return pg('users_friendships')
-            .insert(newConnection)
+          let notificationsId = undefined;
+          let userFriendshipsId = undefined;
+          return pg.insert(newConnection)
+            .into('users_friendships')
+            .returning('id')
+            // add notification to recipient
+            .then((ufId) => {
+              userFriendshipsId = ufId[0];
+              return pg.table('notifications')
+              .returning('id')
+              .insert({'user_id': friendId})
+            })
+            .then(notificationsId => {
+              return pg.insert({
+                'notifications_id': notificationsId[0],
+                'friendships_id': userFriendshipsId
+              })
+              .into('notifications_friendships');
+            })
+          
+
+            // TODO: Implement socket.io sending to friend requested (friendId) updating notificaitons
+
         }
       });
   },
