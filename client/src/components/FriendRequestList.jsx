@@ -22,7 +22,6 @@ class FriendRequestList extends React.Component {
 
       .then((response) => {
         let completed = (this.state.completed || []).concat([friendId]);
-        console.log('adding friendship');
         this.setState({
           completed: completed
         })
