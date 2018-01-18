@@ -16,12 +16,14 @@ class Main extends React.Component {
       username: null,
       name: null,
       picture_url: null,
-      userId: null
+      userId: null,
       friendRequests: []
     }
   }
 
   setBasicUserFields(userData) {
+    console.log('setting userFields now');
+
     this.setState({
       view: 'profile',
       name: userData.first_name + ' ' + userData.last_name,
@@ -29,6 +31,8 @@ class Main extends React.Component {
       username: userData.username,
       userId: userData.id
     })
+
+    this.getFriendRequests(userData.id);
   }
 
   setUsername(username) {
