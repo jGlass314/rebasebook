@@ -156,6 +156,7 @@ const api = {
           res.sendStatus(200);
         })
         .catch((err) => {
+          console.error('addfriendship err:', err);
           res.status(500).json('unexpected server errror');
         });
     },
@@ -191,10 +192,9 @@ const api = {
       // * "response needed"  -- logged-in user needs to respond to friend request
       // * "response pending" -- logged-in user is waiting for friend to respond
       // * friendship request ignored -- logged-in user has ignored/declined friendship 
-
       let userId = parseInt(req.query.userId);
       let friendId = parseInt(req.query.friendId);
-
+      
       if (userId === friendId || !userId || !friendId) {
         res.status(400).json('bad request');
       } else {
@@ -215,7 +215,6 @@ const api = {
             res.status(500).json('unexpected server errror');
           }); 
       }
-
     },
 
     getAllFriends: function(req, res) {
@@ -380,12 +379,10 @@ route.get('/:username/likes', api.user.getLiked); //get liked users of user
 route.get('/:username/profile/:user', api.user.getProfile); //get profile of a specific user
 route.get('/:username', api.user.getUser); //gets a user
 
-
 route.post('/:username/addFriend/:friendToAdd', api.user.addFriend); //add friend to user
 route.post('/:username/removeFriend/:friendToRemove', api.user.removeFriend); //remove friend from user's friends list
 route.post('/:username', api.user.createUser); //creates a new user
 route.patch('/:username/updateProfile', api.user.updateProfile); //update current user's profile
-
 
 //POST
 route.get('/likes', api.post.getNumLikes); // get number of likes
