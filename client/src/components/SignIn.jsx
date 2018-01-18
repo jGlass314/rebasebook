@@ -9,14 +9,11 @@ class SignIn extends React.Component {
     super(props);
     this.state = {
       username: '',
-      newUser: false,
-      getNewUser: false,
+      userId: null,
+      showSignupForm: false,
       redirect: false,
-      profileShows: false,
-      headerShows: false,
       undefinedUsername: false,
       usernameError: false,
-      userId: null
     };
   }
 
@@ -26,13 +23,14 @@ class SignIn extends React.Component {
       usernameError: false
     });
   }
-
-  handleSubmit(e) {
-    this.setState({
-      newUser: true
-    })
-  }
   
+  showSignUpForm(e) {
+    e.preventDefault();
+    this.setState({
+      showSignupForm: true
+    });
+  }
+
   handleLogIn(e) {
     e.preventDefault();
 
@@ -42,30 +40,34 @@ class SignIn extends React.Component {
         undefinedUsername: true
       });
     } else {
+      // otherwise attempt to log user in
       this.logUserIn(this.state.username);
     }  
   }
 
   logUserIn(username) {
 
+    // Call login endpoint
+
     $.get(`/api/${username}`, (data) => {
       // If user successfully logs in
       if (data.length) {
         let basicUserData = data[0];
 
-        this.setState({
-          username: data[0].username,
-          newUser: false,
-          redirect: true
-        });
+        // callback functions that populate user data in Main
 
         this.props.setBasicUserFields(basicUserData);
         this.props.updateLoginState(true);
 
-      } else {
+        // redirect user away from login
         this.setState({
-          newUser: true,
-          getNewUser: true,
+          redirect: true
+        });
+
+      } else {
+        // Failed Login 
+        this.setState({
+          showSignupForm: true,
           redirect: false,
           usernameError: true
         });
@@ -73,12 +75,6 @@ class SignIn extends React.Component {
     })
   }
 
-  handleSignUp(e) {
-    e.preventDefault();
-    this.setState({
-      newUser: true
-    });
-  }
 
   render() {
     let feedPath = '/' + this.state.username + '/feed';
@@ -96,7 +92,7 @@ class SignIn extends React.Component {
         </div>
         <div className="right-column">
           <h3 id="sign-in"> Sign In </h3>
-          <form onSubmit={this.handleSubmit.bind(this)}>
+          <form>
             <Card className="signIn-card">
               <h5 className="signInLabel bottom aligned content">Username</h5>
               {this.state.undefinedUsername && 
@@ -117,14 +113,14 @@ class SignIn extends React.Component {
                 <Button 
                   className="login-button"
                   id="create-new-account"
-                  onClick={this.handleSignUp.bind(this)}>
+                  onClick={this.showSignUpForm.bind(this)}>
                   Sign Up
                 </Button>
               </div>
             </Card>
 
           </form>
-          {this.state.newUser && 
+          {this.state.showSignupForm && 
             <NewUser 
               usernameError={this.state.usernameError}
               username={this.state.username}

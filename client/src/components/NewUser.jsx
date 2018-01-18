@@ -45,11 +45,11 @@ class NewUser extends React.Component {
 
     // Post to the signup endpoint
     } else {
-      console.log('creating account for: ', this.state.username);
+
       $.post(`/api/${this.state.username}`, this.state, () => {
         // After successfull signup log user in
         // Instead, consider just returning user data at this point
-        console.log('logging in user: ', this.state.username);
+
         this.props.logUserIn(this.state.username);
 
         // On successful account creation, redirect away from signup page
