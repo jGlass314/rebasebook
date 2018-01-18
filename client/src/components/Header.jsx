@@ -8,19 +8,7 @@ class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      profilePath: '',
-      feedPath: '',
-      redirectProfile: false,
-      // username: window.location.pathname.substring(1, window.location.pathname.indexOf('/feed'))
     }
-  }
-
-  getUserProfile(user) {
-    this.props.getProfile(user);
-  }
-
-  setSignedOut() {
-    this.props.getSignedIn(false);
   }
 
   render() {
@@ -35,12 +23,11 @@ class Header extends React.Component {
 
     return (
       <div className="global-header">
-        {(this.props.signedIn) && 
+        {this.props.signedIn && 
           <div>
             <Image className="logo" src="/images/rbooktransparent.png"></Image>
             <SearchBar 
               className="searchBarClass"
-              getUserProfile={this.getUserProfile.bind(this)} 
               loggedInUser={this.props.name}/>
             <div className="header-btn">
               <span className='friend-requests'>
@@ -51,9 +38,23 @@ class Header extends React.Component {
                   position='bottom center'
                 />
               </span>
-              <Link onClick={this.setSignedOut.bind(this)} to='/login'><button className="btn"><span className="headerFont">Log Out</span></button></Link>
-              <Link to={profilePath}><button className="btn"><span className="headerFont">Profile</span></button></Link>
-              <Link to={feedPath}><button className="btn"><span className="headerFont">Feed</span></button></Link>
+              <Link
+                onClick={ () => this.props.updateLoginState(false) }
+                to='/login'>
+                <button className="btn">
+                  <span className="headerFont">Log Out</span>
+                </button>
+              </Link>
+              <Link to={profilePath}>
+                <button className="btn">
+                  <span className="headerFont">Profile</span>
+                </button>
+              </Link>
+              <Link to={feedPath}>
+                <button className="btn">
+                  <span className="headerFont">Feed</span>
+                </button>
+              </Link>
             </div>
           </div>
         }
