@@ -12,48 +12,51 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
-      newUsername: '',
-      signedIn: '',
-      name: '',
-      picture_url: '',
+      signedIn: false,
+      username: null,
+      name: null,
+      picture_url: null,
       userId: null,
       friendRequests: []
     }
   }
-  getProfile(user) {
-    axios.get(`/api/${user}`) 
-    .then((res) => {
-      let userId = res.data[0].id;
-      this.setState({
-        view: 'profile',
-        name: res.data[0].first_name + ' ' + res.data[0].last_name,
-        picture_url: res.data[0].picture_url,
-        username: res.data[0].username,
-        userId: userId
-      })
 
-      this.getFriendRequests(userId);
+  setBasicUserFields(userData) {
+    
+    this.setState({
+      view: 'profile',
+      name: userData.first_name + ' ' + userData.last_name,
+      picture_url: userData.picture_url,
+      username: userData.username,
+      userId: userData.id
     })
-    .catch((err) => {
-      console.error('err: ', err);
-    })
+
+    this.getFriendRequests(userData.id);
   }
 
-  getUsername(username) {
+  setUsername(username) {
     this.setState({
       username: username
     })
   }
-  getNewUsername(newUsername) {
-    this.setState({
-      username: newUsername
-    })
-  }
-  getSignedIn(signedIn) {
-    this.setState({
-      signedIn: signedIn
-    })
+
+  updateLoginState(newState) {
+    let loginStatus = Boolean(newState);
+
+    // clear state on log-out
+    if (loginStatus === false) {
+      this.setState({
+        signedIn: false,
+        username: null,
+        name: null,
+        picture_url: null,
+        userId: null
+      })
+    } else {
+      this.setState({
+        signedIn: true
+      });
+    }
   }
 
   getFriendRequests(userId) {
@@ -77,62 +80,57 @@ class Main extends React.Component {
     return (
       <main>
         <div>
-          <Header 
-            getProfile={this.getProfile.bind(this)} 
-            name={this.state.username} 
-            userId={this.state.userId}
-            signedIn={this.state.signedIn} 
-            getSignedIn={this.getSignedIn.bind(this)}
-            friendRequests={this.state.friendRequests}
+        <Header 
+          userId={this.state.userId}
+          name={this.state.username} 
+          signedIn={this.state.signedIn} 
+          updateLoginState={this.updateLoginState.bind(this)}
+          friendRequests={this.state.friendRequests}
+        />
+        <Switch>
+          <Route 
+            exact path='/'
+            render={() => 
+              <SignIn 
+                getUsername={this.setUsername.bind(this)}
+                updateLoginState={this.updateLoginState.bind(this)}
+                setBasicUserFields={this.setBasicUserFields.bind(this)}
+              /> } 
           />
-          <Switch>
-            <Route 
-              exact path='/'
-              component={() => 
-                <SignIn 
-                  getUsername={this.getUsername.bind(this)}
-                  getNewUsername={this.getNewUsername.bind(this)}
-                  getProfile={this.getProfile.bind(this)}
-                  getSignedIn={this.getSignedIn.bind(this)}
-                /> } 
-            />
-            <Route
-              path='/:username/feed' 
-              component={(routeProps) => 
-                <Feed 
-                  {...routeProps}
-                  userId={this.state.userId}
-                  username={this.state.username} 
-                /> }
-            />
-            <Route 
-              path='/login' 
-              component={() =>
-                <SignIn 
-                  getUsername={this.getUsername.bind(this)}
-                  getNewUsername={this.getNewUsername.bind(this)}
-                  getProfile={this.getProfile.bind(this)}
-                  getSignedIn={this.getSignedIn.bind(this)}
-                />
-              } 
-            />
-            <Route 
-              path='/profile/:friendname'
-              component={ (routeProps) =>
-                <Profile 
-                  {...routeProps}
-                  loggedInUserId={this.state.userId}
-                  loggedInUsername={this.state.username}
-                />
-              } 
-            />
+          <Route 
+            exact path='/login' 
+            render={() =>
+              <SignIn 
+                getUsername={this.setUsername.bind(this)}
+                updateLoginState={this.updateLoginState.bind(this)}
+                setBasicUserFields={this.setBasicUserFields.bind(this)}
+              />
+            } 
+          />
+          <Route
+            path='/:username/feed' 
+            render={(routeProps) => 
+              <Feed 
+                {...routeProps}
+                userId={this.state.userId}
+                username={this.state.username} 
+              /> }
+          />
+          <Route 
+            path='/profile/:friendname'
+            render={(routeProps) =>
+              <Profile 
+                {...routeProps}
+                loggedInUserId={this.state.userId}
+                loggedInUsername={this.state.username}
+              />
+            } 
+          />
           </Switch>
         </div>
       </main>
-    )
+    );
   }
-  
 }
 
 export default Main;
-

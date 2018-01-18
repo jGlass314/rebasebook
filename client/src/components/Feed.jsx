@@ -19,8 +19,10 @@ class Feed extends React.Component {
       friendRequests: []
     }
   }
+
   componentDidMount() {
     this.getAllPosts();
+    this.getFriendsList();     
   }
 
   getFriendsList() {
@@ -40,7 +42,6 @@ class Feed extends React.Component {
   }
 
   getAllPosts() {
-
     let username=this.state.username;
     axios.get(`/api/${username}/posts/friends`)
       .then((res1) => {
@@ -59,6 +60,7 @@ class Feed extends React.Component {
         console.error(err);
       });
   }
+
   render() {
     return (
       <div className="feedContainer">
