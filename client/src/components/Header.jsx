@@ -33,7 +33,11 @@ class Header extends React.Component {
               <span className='friend-requests'>
                 <Popup 
                   trigger={icon}
-                  content={<FriendRequestList userId={this.props.userId} friendRequests={this.props.friendRequests}/>}
+                  content={<FriendRequestList 
+                    userId={this.props.userId} 
+                    friendRequests={this.props.friendRequests}
+                    refreshFriendRequests={this.props.refreshFriendRequests}
+                  />}
                   on='click'
                   position='bottom center'
                 />
