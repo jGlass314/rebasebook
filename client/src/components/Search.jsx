@@ -53,7 +53,8 @@ class SearchBar extends Component {
     // alert(result.description)
     this.setState({
       redirect: true,
-      clickedName: result.description
+      clickedName: result.description,
+      value: '',
     })
     // this.setState({ value: result.title }) 
   }
@@ -73,7 +74,7 @@ class SearchBar extends Component {
 
   render() {
     const { isLoading, value, results, source, clickedName } = this.state
-    const profileUrl = '/' + this.state.clickedName + '/profile/' + this.props.loggedInUser;
+    const profileUrl = `/profile/${clickedName}`;
 
     if (this.state.redirect) {
       return (
