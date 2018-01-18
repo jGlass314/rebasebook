@@ -18,33 +18,31 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      posts: [],
-      friends: [],
-      friend: false,
-      username: props.loggedInUsername, // not an error, do not change
-      profilePageInfo: '',
-      isOwner: true,
-      profileInfo: {},
       view: 'Timeline',
-      clickedFriend: '',
-      friendList: [],
+      username: props.loggedInUsername, // not an error, do not change
+      loggedInUserId: props.loggedInUserId,
+      profilePageUsername: props.match.params.friendname, // not an error, do not change
+      isOwner: null,
       profileUserId: null,
-      profilePageOwner: props.match.params.friendname, // not an error, do not change
-      loggedInUserId: props.loggedInUserId
+      posts: [],
+      friend: false,
+      profilePageInfo: '',
+      profileInfo: {},
+      friendList: []
     }
   }
 
   componentDidMount() {
     window.scrollTo(0, 0);
-    this.loadProfileInfo(this.state.profilePageOwner);
-    this.getUserPosts(this.state.profilePageOwner);
-    this.loadSupplementaryProfileInfo(this.state.profilePageOwner);
+    this.loadProfileInfo(this.state.profilePageUsername);
+    this.getUserPosts(this.state.profilePageUsername);
+    this.loadSupplementaryProfileInfo(this.state.profilePageUsername);
   }  
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.pathname !== this.props.location.pathname) {
       this.setState({
-        profilePageOwner: nextProps.match.params.friendname
+        profilePageUsername: nextProps.match.params.friendname
       });
       this.loadProfileInfo(nextProps.match.params.friendname);
       this.getUserPosts(nextProps.match.params.friendname);
@@ -62,7 +60,7 @@ class Profile extends React.Component {
         this.setState({
           profileInfo: responseUserInfo.data[0],
           profileUserId: profileUserId,
-          isOwner: this.state.loggedInUsername === profileName
+          isOwner: this.state.username === profileName
         });
 
         this.getFriends(profileUserId);
@@ -74,7 +72,7 @@ class Profile extends React.Component {
   }
 
   loadSupplementaryProfileInfo(user) {
-    // var user = this.state.profilePageOwner;
+    // var user = this.state.profilePageUsername;
     axios.get(`/api/${user}/profilePage`)
       .then((responseUserProfileInfo) => {
         this.setState({
@@ -87,7 +85,7 @@ class Profile extends React.Component {
   }
 
   getUserPosts(user) {
-    var username = this.state.loggedInUsername;
+    var username = this.state.username;
     axios.get(`/api/${username}/posts/${user}`)
       .then((response) => {
         this.setState({
@@ -100,7 +98,7 @@ class Profile extends React.Component {
   }
 
   getFriends(profileId) {
-    let username = this.state.loggedInUsername;
+
     let params = {
       userId: profileId,
       type: 'friend'
@@ -167,8 +165,6 @@ class Profile extends React.Component {
       .catch((error) => {
         console.error(error);
       })
-
-    // No way currently. Ginger to do in V2. 
   }
 
   handleNavigation(event) {
@@ -178,20 +174,14 @@ class Profile extends React.Component {
   }
 
   updateProfile(changes) {
-    var username = this.state.loggedInUsername;
+    var username = this.state.profilePageUsername;
     axios.patch(`/api/${username}/updateProfile`, changes)
       .then((response) => {
-        this.getUserProfileInfo(this.state.profilePageOwner);
+        this.getUserProfileInfo(this.state.profilePageUsername);
       })
       .catch((error) => {
         console.log(error);
       }); 
-  }
-
-  getFriendName(friend) {
-    this.setState({
-      clickedFriend: friend
-    })
   }
 
   render() {
@@ -199,7 +189,6 @@ class Profile extends React.Component {
       <div className="profile">
         <Profile_backgroundAndProfilePic 
           userInfo={this.state.profileInfo}
-          friend={this.state.friend}
           addFriend={this.addFriend.bind(this)}
           removeFriend={this.removeFriend.bind(this)}
           isOwner={this.state.isOwner}
@@ -223,17 +212,14 @@ class Profile extends React.Component {
           profilePageInfo={this.state.profilePageInfo} />
         <Profile_friends
           friendList={this.state.friendList}
-          friend={this.state.clickedFriend}
-          getFriendName={this.getFriendName.bind(this)}
-          friends={this.state.friends}
           view={this.state.view}
-          owner={this.state.profilePageOwner}
+          owner={this.state.profilePageUsername}
           user={this.state.username} />
         <Profile_photos 
           view={this.state.view} />
         <Profile_postSection 
           getUserPosts={this.getUserPosts.bind(this)} 
-          username={this.state.profilePageOwner} 
+          username={this.state.profilePageUsername} 
           posts={this.state.posts} 
           view={this.state.view} 
           isOwner={this.state.isOwner} />
