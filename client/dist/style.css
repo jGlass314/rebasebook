@@ -38,6 +38,11 @@ body {
 .search-bar {
   float: left;
 }
+
+.friend-requests {
+  float: right;
+  margin-top: 20px;
+}
 .global-header {
   height: 65px;
   background-color: #3F5FA4;

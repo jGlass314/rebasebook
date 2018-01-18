@@ -14,13 +14,14 @@ class FriendUserButton extends React.Component {
     if (this.props.friendshipStatus === 'friends') {
       button = <Button compact inverted animated size="small"
         className='removeFriends'
-        onClick={this.props.removeFriend} >
+        onClick={() => this.props.removeFriend(this.props.profileUserId)} >
           <Button.Content visible>
             <Icon name='check' />
-            Add Friend
+            Friends
           </Button.Content> 
           <Button.Content hidden>
-            Remove Friend
+            <Icon name='remove' />
+            Unfriend
           </Button.Content> 
         </Button>
 
@@ -30,7 +31,7 @@ class FriendUserButton extends React.Component {
         className='approveFriendship'
         onClick={() => this.props.addFriend(this.props.profileUserId)} >
           <Button.Content visible>
-            <Icon name='check' />
+            <Icon name='add circle'/>
             Approve Friend Request
           </Button.Content> 
         </Button>
@@ -39,7 +40,7 @@ class FriendUserButton extends React.Component {
 
       button = <Button compact inverted animated size="small"
         className='removeFriends'
-        onClick={this.props.removeFriend} >
+        onClick={() => this.props.removeFriend(this.props.profileUserId)} >
           <Button.Content visible>
             <Icon name='check' />
             Friend request sent!
