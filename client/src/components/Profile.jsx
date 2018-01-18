@@ -22,10 +22,10 @@ class Profile extends React.Component {
       username: props.loggedInUsername, // not an error, do not change
       loggedInUserId: props.loggedInUserId,
       profilePageUsername: props.match.params.friendname, // not an error, do not change
-      isOwner: null,
       profileUserId: null,
+      isOwner: null,
+      friendshipStatus: null,
       posts: [],
-      friend: false,
       profilePageInfo: '',
       profileInfo: {},
       friendList: []
@@ -72,7 +72,6 @@ class Profile extends React.Component {
   }
 
   loadSupplementaryProfileInfo(user) {
-    // var user = this.state.profilePageUsername;
     axios.get(`/api/${user}/profilePage`)
       .then((responseUserProfileInfo) => {
         this.setState({

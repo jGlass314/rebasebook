@@ -24,19 +24,19 @@ class Header extends React.Component {
     const feedPath = '/' + this.props.name + '/feed';
     return (
       <div className="global-header">
-        {
-          (this.props.signedIn) ? 
+        {(this.props.signedIn) && 
           <div>
             <Image className="logo" src="/images/rbooktransparent.png"></Image>
-            <SearchBar className="searchBarClass"getUserProfile={this.getUserProfile.bind(this)} loggedInUser={this.props.name}/>
+            <SearchBar 
+              className="searchBarClass"
+              getUserProfile={this.getUserProfile.bind(this)} 
+              loggedInUser={this.props.name}/>
             <div className="header-btn">
               <Link onClick={this.setSignedOut.bind(this)} to='/login'><button className="btn"><span className="headerFont">Log Out</span></button></Link>
               <Link to={profilePath}><button className="btn"><span className="headerFont">Profile</span></button></Link>
               <Link to={feedPath}><button className="btn"><span className="headerFont">Feed</span></button></Link>
             </div>
           </div>
-          :
-          null
         }
       </div>
     );
