@@ -6,6 +6,7 @@ import ChatFriendSearch from './ChatFriendSearch.jsx';
 import ChatFeed from './ChatFeed.jsx';
 import ChatMessageInput from './ChatMessageInput.jsx';
 import ChatButton from './ChatButton.jsx';
+import io from 'socket.io-client';
 
 class ChatWindow extends React.Component {
   constructor(props) {
@@ -13,6 +14,8 @@ class ChatWindow extends React.Component {
 
     this.state = {
       friend: null,
+      socket: null,
+      messages: []
     }
 
     this.onClose = this.onClose.bind(this);
@@ -23,8 +26,18 @@ class ChatWindow extends React.Component {
     //tidy up sockets
   }
 
-  onFriendSelect() {
-    //start new chat session with selected friend
+  onFriendSelect(friend) {
+    const socket = io();
+
+    socket.on('connect', function () {
+      socket.emit('login', { username: this.props.username} );
+    });
+
+    this.setState({
+      socket: socket
+    });
+
+    this.state.friend = friend;
   }
 
   render() {
@@ -34,9 +47,10 @@ class ChatWindow extends React.Component {
         chatMessageInput;
 
     if (this.state.friend) {
+      console.log('Friend is null');
       chatHeaderText = this.state.friend.name;
       chatFriendSearch = null;
-      chatMessageInput = <ChatMessageInput />
+      chatMessageInput = <ChatMessageInput socket={this.state.socket}/>
     } else {
       chatHeaderText = 'New Message';
       chatFriendSearch = <ChatFriendSearch onSelect={this.onFriendSelect}/>
@@ -47,7 +61,7 @@ class ChatWindow extends React.Component {
       <Segment >
         <ChatHeader text={chatHeaderText} onClose={this.onClose} />
         {chatFriendSearch}
-        <ChatFeed />
+        <ChatFeed messages={this.state.messages}/>
         {chatMessageInput} 
       </Segment>
     )

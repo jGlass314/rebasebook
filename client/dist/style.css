@@ -613,6 +613,27 @@ textarea {
   width: 35%;
 }
 
+/******************************************** Chat Component ******************************************************/
+
+.chatFriendSearch {
+  background-color: rgb(224, 225, 226);
+  vertical-align: 'middle'
+}
+
+.chatHeader {
+  background-color: #3F5FA4;
+  color: rgb(255, 255, 255);
+  height: 3rem;
+  vertical-align: 'middle';
+}
+
+.ui.icon.right.floated.button.chatCloseButton {
+  background-color: rgba(0, 0, 0, 0.0);
+  vertical-align: 'middle';
+  color: rgb(255, 255, 255);
+}
+
+
 /******************************************** Feed Component ******************************************************/
 
 .feedContainer {
@@ -676,6 +697,7 @@ textarea {
   padding-right: 10px;
   margin-bottom: 17.5px;
 }
+
 .feedTrendingLabel {
   margin-bottom: -5px;
 }

@@ -2,9 +2,9 @@ import React from 'react';
 import { Button } from 'semantic-ui-react';
 
 const ChatHeader = (props) => (
-  <div className='chatheader'>
+  <div className='chatHeader'>
     {props.text}
-    <Button icon='close' onClick={props.onClose}/>
+    <Button className='chatCloseButton' floated='right' icon='close' onClick={props.onClose}/>
   </div>
 )
 

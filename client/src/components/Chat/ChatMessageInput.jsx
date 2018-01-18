@@ -3,6 +3,13 @@ import { TextArea } from 'semantic-ui-react';
 
 class ChatMessageInput extends React.Component {
 
+  constructor(props) {
+    super(props);
+  
+    this.state = {
+      text: ''
+    };
+  }
   onInput(e, {value}) {
     console.log('onInput ', value);
   }

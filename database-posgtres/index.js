@@ -215,7 +215,6 @@ module.exports = {
   },
   //add user to db
   addUser: (userData, callback) => {
-    console.log('in db addUser start......', userData)
     client.query(`INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('${userData.username}', '${userData.firstName}', '${userData.lastName}', '${userData.pictureUrl}');`, (err, res) => {
       if (err) {
         callback(err.detail, null);
@@ -306,7 +305,6 @@ module.exports = {
         console.log('Error', err)
         callback(err, null);
       } else {  
-        console.log('/:username/posts/nonfriends posts from db...')
         // console.log('res', res);
         callback(null, res.rows);
       }  
@@ -320,13 +318,11 @@ module.exports = {
         console.log('Error', err)
         callback(err, null);
       } else {  
-        console.log('successfully removed one permutation of friends');
         client.query(queryTwo, (err, res) => {
           if (err) {
             console.log('Error', err)
             callback(err, null);
           } else {  
-            console.log('successfully removed both permutations of friends');
             callback(null, res.rows);
           }  
         });
@@ -334,9 +330,7 @@ module.exports = {
     });
   },
   getProfilePageInfo: (username, callback) => {
-    console.log('getting profile page info....');
     var query = `SELECT * from user_profiles WHERE user_id = (SELECT id FROM users WHERE username = '${username}')`;
-    console.log(query);
     client.query(query, (err, res) => {
       if (err) {
         callback(err, null);

@@ -11,6 +11,7 @@ import { Button, Icon, Image, Header, List, Item, Divider, Menu, Advertisement }
 class Feed extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       postList: [],
       username: this.props.username,
@@ -118,9 +119,9 @@ class Feed extends React.Component {
             name={this.state.username} />
         </div>
 
-        {/*<div className="chat">
-          <ChatWindow />
-          </div>*/}
+        <div className="chat">
+          <ChatWindow username={this.props.username} />
+        </div>
 
         <div className="feedSidebar">
           {/*<FriendsList friends={this.state.friends} />
