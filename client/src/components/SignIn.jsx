@@ -9,11 +9,18 @@ class SignIn extends React.Component {
     super(props);
     this.state = {
       username: '',
-      userId: null,
-      showSignupForm: false,
+      newUsername: '',
+      newUser: false,
+      getNewUser: false,
       redirect: false,
+      profileShows: false,
+      headerShows: false,
       undefinedUsername: false,
-      usernameError: false,
+      usernameError: false, // sent to NewUser component to activate if the username doesn't already exist
+      userId: null,
+      password: '', 
+      undefinedPassword: false, 
+
     };
   }
 
@@ -23,6 +30,13 @@ class SignIn extends React.Component {
       usernameError: false
     });
   }
+
+  handlePasswordInput (e) { 
+    this.setState({
+      password: e.target.value,
+      passwordError: false
+    });
+  }
   
   showSignUpForm(e) {
     e.preventDefault();
@@ -30,52 +44,52 @@ class SignIn extends React.Component {
       showSignupForm: true
     });
   }
-
+  
+  handleSubmit(e) {
+    this.setState({
+      newUser: true
+    })
+  }
+  
   handleLogIn(e) {
     e.preventDefault();
-
-    // If the user has not entered a username, show error
     if (!this.state.username) {
       this.setState({
         undefinedUsername: true
       });
     } else {
-      // otherwise attempt to log user in
-      this.logUserIn(this.state.username);
+      var {username, password} = this.state; 
+      $.post(`/login`,{username: username, password: password}, (data) => {
+        if (data.length) {
+          this.setState({
+            username: data[0].username,
+            newUser: false,
+            redirect: true
+          });
+          this.props.getSignedIn(true);
+          this.props.getProfile(this.state.username);
+        } else {
+          this.setState({
+            newUser: true,
+            getNewUser: true,
+            redirect: false,
+            usernameError: true
+          });
+        }
+      })
     }  
   }
 
-  logUserIn(username) {
-
-    // Call login endpoint
-
-    $.get(`/api/${username}`, (data) => {
-      // If user successfully logs in
-      if (data.length) {
-        let basicUserData = data[0];
-
-
-        // callback functions that populate user data in Main
-
-        this.props.setBasicUserFields(basicUserData);
-        this.props.updateLoginState(true);
-
-        // redirect user away from login
-        this.setState({
-          redirect: true
-        });
-
-      } else {
-        // Failed Login 
-        this.setState({
-          showSignupForm: true,
-          redirect: false,
-          usernameError: true
-        });
-      }
-    })
+  handleSignUp(e) {
+    e.preventDefault();
+    this.setState({
+      newUser: true
+    });
   }
 
+  getUsername() {
+    this.props.getUsername(this.state.username);
+  }
 
   render() {
     let feedPath = '/' + this.state.username + '/feed';
@@ -87,46 +101,35 @@ class SignIn extends React.Component {
         <div className="left-column">
           <h1 className="signInLogoLabel">Welcome to</h1>
           <img className="signInLogo" src='/images/rebasebookblue.png' />
-          <h3 className="signInTag">
-            The social media for <span className="programmersLabel">&#60;programmers&#62;</span>.
-          </h3>
+          <h3 className="signInTag">The social media for <span className="programmersLabel">&#60;programmers&#62;</span>.</h3>
         </div>
         <div className="right-column">
           <h3 id="sign-in"> Sign In </h3>
-          <form>
-            <Card className="signIn-card">
-              <h5 className="signInLabel bottom aligned content">Username</h5>
-              {this.state.undefinedUsername && 
-                <h5 className="undefined-user-error">
-                  <Icon name="warning circle"/>Please enter your username.
-                </h5>
-              }
-              <Input 
-                className="username-input"
-                type="text"
-                onChange={this.handleUsernameInput.bind(this)}
-              />
-              <Link onClick={this.handleLogIn.bind(this)} to={feedPath}>
-                <Button className="login-button" id="login"> Log In </Button>
-              </Link>
-              <div id="create-account-text">Don't have an account yet?</div>
-              <div>
-                <Button 
-                  className="login-button"
-                  id="create-new-account"
-                  onClick={this.showSignUpForm.bind(this)}>
-                  Sign Up
-                </Button>
-              </div>
-            </Card>
+          <form action="/login" method="post" onSubmit={this.handleSubmit.bind(this)}>
+          <Card className="signIn-card">
 
-          </form>
-          {this.state.showSignupForm && 
+            <h5 className="signInLabel bottom aligned content">Username</h5>
+            {this.state.undefinedUsername && <h5 className="undefined-user-error"><Icon name="warning circle"/>Please enter your username.</h5>}
+            <Input className="username-input" type="text" onChange={this.handleUsernameInput.bind(this)}/>
+
+            <h5 className="signInLabel bottom aligned content">Password</h5>
+            {this.state.undefinedPassword && <h5 className="undefined-user-error"><Icon name="warning circle"/>Please enter your password.</h5>}
+            <Input className="username-input" type="password" onChange={this.handlePasswordInput.bind(this)}/>
+
+            <Link onClick={this.handleLogIn.bind(this)} to={feedPath}><Button className="login-button" id="login"> Log In </Button></Link>
+            <div id="create-account-text">Don't have an account yet?</div>
+            <div><Button className="login-button" id="create-new-account" onClick={this.handleSignUp.bind(this)}>Sign Up</Button></div>
+          </Card>
+          {this.state.newUser && 
             <NewUser 
-              usernameError={this.state.usernameError}
-              username={this.state.username}
-              logUserIn={this.logUserIn.bind(this)}/>
+              usernameError={this.state.usernameError} 
+              newUsername={this.state.newUsername} 
+              getNewUsername={this.props.getNewUsername} 
+              username={this.state.username} 
+              getSignedIn={this.props.getSignedIn}
+            />
           }
+          </form>
         </div>
       </div>  
     )

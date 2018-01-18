@@ -8,16 +8,17 @@ DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users (
     id SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR (25) NOT NULL UNIQUE,
+    password VARCHAR (25) NOT NULL,
     first_name VARCHAR (25),
     last_name VARCHAR (25),
     picture_url VARCHAR(255)
 );
 
-INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('mattupham', 'Matt', 'Upham', 'https://data.whicdn.com/images/14922648/large.jpg');
-INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('albertchanged', 'Albert', 'Chang', 'https://img.buzzfeed.com/buzzfeed-static/static/2017-07/5/14/enhanced/buzzfeed-prod-fastlane-03/enhanced-17346-1499278727-21.jpg?downsize=715:*&output-format=auto&output-quality=auto');
-INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('rayango', 'Ryan', 'Ngo', 'http://cdn.litlepups.net/2015/08/02/cute-small-dog-breeds-in-india-sweet.jpg');
-INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('kmenghini', 'Kaitlyn', 'Menghini', 'https://lh4.ggpht.com/4nDELzdauqt2pyNaf-JI-ZDo6Ur87KgtQi9ASUaQF-l8qMIfufBXz0FLh1BV5oxGbDw=h900');
-INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('sjain', 'Shubhra', 'Jain', 'https://petcube.com/blog/content/images/2017/04/kitten-supplies-cover-1.jpg');
+INSERT INTO users (username, password, first_name, last_name, picture_url) VALUES ('mattupham', 'test', 'Matt', 'Upham', 'https://data.whicdn.com/images/14922648/large.jpg');
+INSERT INTO users (username, password, first_name, last_name, picture_url) VALUES ('albertchanged', 'test', 'Albert', 'Chang', 'https://img.buzzfeed.com/buzzfeed-static/static/2017-07/5/14/enhanced/buzzfeed-prod-fastlane-03/enhanced-17346-1499278727-21.jpg?downsize=715:*&output-format=auto&output-quality=auto');
+INSERT INTO users (username, password, first_name, last_name, picture_url) VALUES ('rayango', 'test', 'Ryan', 'Ngo', 'http://cdn.litlepups.net/2015/08/02/cute-small-dog-breeds-in-india-sweet.jpg');
+INSERT INTO users (username, password, first_name, last_name, picture_url) VALUES ('kmenghini', 'test', 'Kaitlyn', 'Menghini', 'https://lh4.ggpht.com/4nDELzdauqt2pyNaf-JI-ZDo6Ur87KgtQi9ASUaQF-l8qMIfufBXz0FLh1BV5oxGbDw=h900');
+INSERT INTO users (username, password, first_name, last_name, picture_url) VALUES ('sjain', 'test', 'Shubhra', 'Jain', 'https://petcube.com/blog/content/images/2017/04/kitten-supplies-cover-1.jpg');
 
 DROP TABLE IF EXISTS posts CASCADE;
 CREATE TABLE posts (
