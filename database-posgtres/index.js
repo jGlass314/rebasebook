@@ -402,12 +402,10 @@ module.exports = {
           
           // change existing to friended and add new entry
           return pg.transaction((trx) => {
-            console.log('**Josh** in addFriendship, inserting into uf:', newConnection);
             pg.insert(newConnection)
               .into('users_friendships')
               .transacting(trx)
               .then((results) => {
-                console.log('**Josh** in addFriendship, changing state to friend on uf.from:', friendId, 'uf.to:', userId);
                 return pg.where('user_id_to', userId)
                   .where('user_id_from', friendId)
                   .limit(1)
@@ -417,21 +415,18 @@ module.exports = {
               .then(trx.commit)
               // add notification to requestor
               .then(() => {
-                console.log('**Josh** in addFriendship, setting notification to requestor. just committed to db. getting uf.id');
                 return pg.select('id')
                 .from('users_friendships')
                 .where('user_id_to', userId)
                 .andWhere('user_id_from', friendId)
               })
               .then((rows) => {
-                console.log('**Josh** saving uf.id:', rows[0].id, 'and inserting into n for friendId:', friendId);
                 insertQueryInfo.usersFriendshipsId = rows[0].id;
                 return pg.insert({'user_id': friendId})
                 .into('notifications')
                 .returning('id')
               })
               .then(notificationsId => {
-                console.log('**Josh** inserting into nf with n.id:', notificationsId[0], 'and f.id:', insertQueryInfo.usersFriendshipsId);
                 return pg.insert({
                   'notifications_id': notificationsId[0],
                   'friendships_id': insertQueryInfo.usersFriendshipsId
@@ -440,7 +435,6 @@ module.exports = {
               })
               // mark notification to the requestee as 'seen'
               .then(() => {
-                console.log('**Josh** getting n.id for setting notification to requestee as seen');
                 return pg.column(
                   {notificationsId: 'notifications.id'}
                 )
@@ -453,7 +447,6 @@ module.exports = {
                 .andWhere('users_friendships.user_id_to', userId)
               })
               .then(rows => {
-                console.log('**Josh** updating notification to seen for n.id:', rows[0].notificationsId);
                 return pg('notifications')
                 .update('seen', 'true')
                 .where('id', rows[0].notificationsId)
@@ -474,14 +467,12 @@ module.exports = {
             .returning('id')
             // add notification to recipient
             .then((ufId) => {
-              console.log('**Josh** inserting notification to friend recipient for uf.id:', ufId[0], 'and f.id:', friendId);
               userFriendshipsId = ufId[0];
               return pg.table('notifications')
               .returning('id')
               .insert({'user_id': friendId})
             })
             .then(notificationsId => {
-              console.log('**Josh** inserting into nf with n.id:', notificationsId[0], 'and f.id:', userFriendshipsId);
               return pg.insert({
                 'notifications_id': notificationsId[0],
                 'friendships_id': userFriendshipsId
