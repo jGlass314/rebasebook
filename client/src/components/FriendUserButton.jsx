@@ -17,10 +17,11 @@ class FriendUserButton extends React.Component {
         onClick={() => this.props.removeFriend(this.props.profileUserId)} >
           <Button.Content visible>
             <Icon name='check' />
-            Add Friend
+            Friends
           </Button.Content> 
           <Button.Content hidden>
-            Remove Friend
+            <Icon name='remove' />
+            Unfriend
           </Button.Content> 
         </Button>
 
@@ -30,7 +31,7 @@ class FriendUserButton extends React.Component {
         className='approveFriendship'
         onClick={() => this.props.addFriend(this.props.profileUserId)} >
           <Button.Content visible>
-            <Icon name='check' />
+            <Icon name='add circle'/>
             Approve Friend Request
           </Button.Content> 
         </Button>
