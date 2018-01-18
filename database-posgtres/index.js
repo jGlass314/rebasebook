@@ -439,7 +439,7 @@ module.exports = {
             .del();
 
         } else if (results === 'friends') {
-          console.log('begin delete', results);
+
           // For existing friendships, delete the users friendship
           // And change the friend's friend entry to a request
           return pg.transaction((trx) => {
