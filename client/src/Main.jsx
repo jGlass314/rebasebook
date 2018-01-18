@@ -38,13 +38,10 @@ class Main extends React.Component {
   }
 
   updateLoginState(newState) {
-    this.setState({
-      signedIn: newState
-    });
+    let loginStatus = Boolean(newState);
 
-    console.log('changing login state', newState);
     // clear state on log-out
-    if (newState === false) {
+    if (loginStatus === false) {
       this.setState({
         signedIn: false,
         username: null,
@@ -52,6 +49,10 @@ class Main extends React.Component {
         picture_url: null,
         userId: null
       })
+    } else {
+      this.setState({
+        signedIn: true
+      });
     }
   }
 
