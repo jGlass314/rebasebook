@@ -402,10 +402,12 @@ module.exports = {
           
           // change existing to friended and add new entry
           return pg.transaction((trx) => {
+            console.log('**Josh** in addFriendship, inserting into uf:', newConnection);
             pg.insert(newConnection)
               .into('users_friendships')
               .transacting(trx)
               .then((results) => {
+                console.log('**Josh** in addFriendship, changing state to friend on uf.from:', friendId, 'uf.to:', userId);
                 return pg.where('user_id_to', userId)
                   .where('user_id_from', friendId)
                   .limit(1)
