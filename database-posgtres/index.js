@@ -396,10 +396,10 @@ module.exports = {
           // If userId is responding to a pending request, or changing a previous decline,
           // change the existing query to 'friend' and add new entry 
           newConnection.state = 'friend';
-          let insertUsersFriendshipsId = undefined;
-          let deleteNotificationsFriendshipsId = undefined;
-          let deleteNotificationsId = undefined;
-          let deleteUsersFriendshipsId = undefined;
+          let insertQueryInfo = {
+            usersFriendshipsId: undefined
+          };
+          
           // change existing to friended and add new entry
           return pg.transaction((trx) => {
             pg.insert(newConnection)
@@ -421,7 +421,7 @@ module.exports = {
                 .andWhere('user_id_from', friendId)
               })
               .then((rows) => {
-                insertUsersFriendshipsId = rows[0].id;
+                insertQueryInfo.usersFriendshipsId = rows[0].id;
                 return pg.insert({'user_id': friendId})
                 .into('notifications')
                 .returning('id')
@@ -429,16 +429,14 @@ module.exports = {
               .then(notificationsId => {
                 return pg.insert({
                   'notifications_id': notificationsId[0],
-                  'friendships_id': insertUsersFriendshipsId
+                  'friendships_id': insertQueryInfo.usersFriendshipsId
                 })
                 .into('notifications_friendships')
               })
-              // delete notification from the requestee
+              // mark notification to the requestee as 'seen'
               .then(() => {
                 return pg.column(
-                  {uf_id: 'users_friendships.id'},
-                  {nf_id: 'users_friendships.id'},
-                  {n_id: 'notifications.id'}
+                  {notificationsId: 'notifications.id'}
                 )
                 .select()
                 .from('users_friendships')
@@ -449,21 +447,9 @@ module.exports = {
                 .andWhere('users_friendships.user_id_to', userId)
               })
               .then(rows => {
-                deleteUsersFriendshipsId = rows[0].uf_id;
-                deleteNotificationsFriendshipsId = rows[0].nf_id;
-                deleteNotificationsId = rows[0].n_id;
-              })
-              // must be done in seq because of FK relationship
-              .then(() => {
-                return pg('notifications_friendships')
-                .where('notifications_id', deleteNotificationsId)
-                .andWhere('friendships_id', deleteUsersFriendshipsId)
-                .del()
-              })
-              .then(() => {
                 return pg('notifications')
-                .where('id', deleteNotificationsId)
-                .del()
+                .update('seen', 'true')
+                .where('id', rows[0].notificationsId)
               })
 
               // TODO: Implement socket.io sending to requestor (userId) updating notificaitons
@@ -493,7 +479,6 @@ module.exports = {
               })
               .into('notifications_friendships');
             })
-            .catch();
           
 
             // TODO: Implement socket.io sending to friend requested (friendId) updating notificaitons
