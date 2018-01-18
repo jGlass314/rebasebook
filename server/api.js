@@ -154,7 +154,7 @@ const api = {
       db.addFriendship(userId, friendId)
         .then((results) => {
           console.log(results);
-          res.sendStatus(200);
+          res.status(200);
         })
         .catch((err) => {
           res.status(500).json('unexpected server errror');
@@ -226,7 +226,7 @@ const api = {
       db.getAllUsers((err, data) => {
         if (err) {
           console.log(err.message);
-          res.send(400).send('Unable to retrieve all Users');
+          res.status(400).send('Unable to retrieve all Users');
         } else {
           res.status(200).json(data);
         }
@@ -239,7 +239,7 @@ const api = {
       db.createPost(req.params.username, req.body.text, (err, data) => {
         if (err) {
           console.log(err.message);
-          res.send(400).send('Unable to create Post');
+          res.status(400).send('Unable to create Post');
         } else {
           res.status(200).json(data);
         }
@@ -261,7 +261,7 @@ const api = {
       db.unlikePost(req.params.author, req.query.text, req.query.username, (err, data) => {
         if (err) {
           console.log(err.message);
-          res.send(400).send('Unable to unlike post');
+          res.status(400).send('Unable to unlike post');
         } else {
           res.status(200).json(data);
         }
@@ -273,7 +273,7 @@ const api = {
       db.likePost(req.params.author, req.body.text, req.body.username, (err, data) => {
         if (err) {
           console.log(err.message);
-          res.send(400).send('Unable to like Post');
+          res.status(400).send('Unable to like Post');
         } else {
           res.status(200).json(data);
         }
@@ -298,7 +298,7 @@ const api = {
       db.getAllPosts((err, data) => {
         if (err) {
           console.log(err.message);
-          res.send(400).send('Unable to retrieve all Posts');
+          res.status(400).send('Unable to retrieve all Posts');
         } else {
           res.status(200).json(data);
         }
@@ -341,6 +341,8 @@ const api = {
   }
 };
 
+//USERS
+route.get('/search/users', api.users.getUsers); //get all users
 
 //USER
 route.post('/friendship', api.user.addFriendship); // CG: ginger's new friendship endpoint
@@ -361,9 +363,6 @@ route.post('/:username/removeFriend/:friendToRemove', api.user.removeFriend); //
 route.post('/:username', api.user.createUser); //creates a new user
 route.patch('/:username/updateProfile', api.user.updateProfile); //update current user's profile
 
-
-//USERS
-route.get('/search/users', api.users.getUsers); //get all users
 
 //POST
 route.get('/likes', api.post.getNumLikes); // get number of likes
