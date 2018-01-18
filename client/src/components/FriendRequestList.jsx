@@ -19,9 +19,10 @@ class FriendRequestList extends React.Component {
     }
 
     axios.post('/api/friendship', data)
+
       .then((response) => {
         let completed = (this.state.completed || []).concat([friendId]);
-
+        console.log('adding friendship');
         this.setState({
           completed: completed
         })

@@ -22,8 +22,7 @@ class Main extends React.Component {
   }
 
   setBasicUserFields(userData) {
-    console.log('setting userFields now');
-
+    
     this.setState({
       view: 'profile',
       name: userData.first_name + ' ' + userData.last_name,
@@ -82,6 +81,7 @@ class Main extends React.Component {
       <main>
         <div>
         <Header 
+          userId={this.state.userId}
           name={this.state.username} 
           signedIn={this.state.signedIn} 
           updateLoginState={this.updateLoginState.bind(this)}
@@ -90,25 +90,16 @@ class Main extends React.Component {
         <Switch>
           <Route 
             exact path='/'
-            component={() => 
+            render={() => 
               <SignIn 
                 getUsername={this.setUsername.bind(this)}
                 updateLoginState={this.updateLoginState.bind(this)}
                 setBasicUserFields={this.setBasicUserFields.bind(this)}
               /> } 
           />
-          <Route
-            path='/:username/feed' 
-            component={(routeProps) => 
-              <Feed 
-                {...routeProps}
-                userId={this.state.userId}
-                username={this.state.username} 
-              /> }
-          />
           <Route 
-            path='/login' 
-            component={() =>
+            exact path='/login' 
+            render={() =>
               <SignIn 
                 getUsername={this.setUsername.bind(this)}
                 updateLoginState={this.updateLoginState.bind(this)}
@@ -116,9 +107,18 @@ class Main extends React.Component {
               />
             } 
           />
+          <Route
+            path='/:username/feed' 
+            render={(routeProps) => 
+              <Feed 
+                {...routeProps}
+                userId={this.state.userId}
+                username={this.state.username} 
+              /> }
+          />
           <Route 
             path='/profile/:friendname'
-            component={ (routeProps) =>
+            render={(routeProps) =>
               <Profile 
                 {...routeProps}
                 loggedInUserId={this.state.userId}

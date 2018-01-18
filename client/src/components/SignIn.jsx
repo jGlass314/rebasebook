@@ -54,9 +54,6 @@ class SignIn extends React.Component {
       if (data.length) {
         let basicUserData = data[0];
 
-        this.setState({
-          redirect: true
-        });
 
         // callback functions that populate user data in Main
 
@@ -64,6 +61,9 @@ class SignIn extends React.Component {
         this.props.updateLoginState(true);
 
         // redirect user away from login
+        this.setState({
+          redirect: true
+        });
 
       } else {
         // Failed Login 
