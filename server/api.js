@@ -153,12 +153,33 @@ const api = {
 
       db.addFriendship(userId, friendId)
         .then((results) => {
-          console.log(results);
           res.sendStatus(200);
         })
         .catch((err) => {
           res.status(500).json('unexpected server errror');
         });
+    },
+
+    destroyFriendship: function(req, res) {
+      // This endpoint removes a friendship from userId to friendId. 
+      let type = req.body.type;
+      let userId = parseInt(req.body.userId);
+      let friendId = parseInt(req.body.friendId);
+
+      if (!userId || !friendId || type !== 'remove') {
+        res.status(400).json('bad request');
+        return;
+      }
+
+      db.removeFriendship(userId, friendId)
+        .then((results) => {
+          res.sendStatus(200);
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).json('unexpected server errror');
+        });
+
     },
 
     getFriendship: function(req, res) {
@@ -176,24 +197,25 @@ const api = {
 
       if (userId === friendId || !userId || !friendId) {
         res.status(400).json('bad request');
+      } else {
+        db.getFriendship(userId, friendId)
+          .then((results) => {
+
+            let friendshipStatus = results;
+
+            if (friendshipStatus === undefined) {
+              // This should not occur. Send server error and capture edge cases.
+              res.status(500).json('unexpected server errror');
+            } else {
+              res.status(200).json({'friendship_status': friendshipStatus});
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json('unexpected server errror');
+          }); 
       }
 
-      db.getFriendship(userId, friendId)
-        .then((results) => {
-
-          let friendshipStatus = results;
-
-          if (friendshipStatus === undefined) {
-            // This should not occur. Send server error and capture edge cases.
-            res.status(500).json('unexpected server errror');
-          } else {
-            res.status(200).json({'friendship_status': friendshipStatus});
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          res.status(500).json('unexpected server errror');
-        });   
     },
 
     getAllFriends: function(req, res) {
@@ -345,9 +367,10 @@ const api = {
 route.get('/search/users', api.users.getUsers); //get all users
 
 //USER
-route.post('/friendship', api.user.addFriendship); // CG: ginger's new friendship endpoint
-route.get('/friendship', api.user.getFriendship); // CG: This endpoint returns the status of an existing friendship request between two users.
-route.get('/friend_list', api.user.getAllFriends);
+route.post('/friendship', api.user.addFriendship); // add a friendship between 2 users
+route.patch('/friendship', api.user.destroyFriendship); // destroy a friendship or a friendship request
+route.get('/friendship', api.user.getFriendship); // returns the status of an existing friendship between two users.
+route.get('/friend_list', api.user.getAllFriends); // returns a user's friends list, or if the type requests is sent, a friends-request list
 
 route.get('/:username/profilePage', api.user.getProfilePage); // get profilePage info for user
 route.get('/:username/friendsList/:otherUsername', api.user.getFriendsList); // get a friends friend list

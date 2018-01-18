@@ -17,7 +17,6 @@ const pg = require('knex') ({
   pool: { min: 0, max: 7 }
 });
 
-
 // KNEX HELPER FUNCTIONS FOR BUILDING MODULAR 
 
 let includesUserInFriendship = function(queryBuilder, userId) {
@@ -421,11 +420,58 @@ module.exports = {
       });
   },
 
+  removeFriendship: (userId, friendId) => {
+    console.log('inside remove');
+
+    return module.exports.getFriendship(userId, friendId)
+      .then((results) => {
+        if (results === null || results === 'response needed' || results === 'friendship request ignored') {
+          // If there is no relationship, or the user has not added the friend,
+          // do nothing.
+          return;
+        } else if (results === 'response pending') {
+          // If userId is undoing their friend request
+          // delete that friend request
+
+          return pg('users_friendships')
+            .where('user_id_from', userId)
+            .where('user_id_to', friendId)
+            .where('state', 'request')
+            .limit(1)
+            .del();
+
+        } else if (results === 'friends') {
+          console.log('begin delete', results);
+          // For existing friendships, delete the users friendship
+          // And change the friend's friend entry to a request
+          return pg.transaction((trx) => {
+            pg('users_friendships')
+              .where('user_id_from', friendId)
+              .where('user_id_to', userId)
+              .where('state', 'friend')
+              .limit(1)
+              .update({'state': 'request'})
+              .transacting(trx)
+              .then((results) => {
+                console.log('step one done')
+                return pg.where('user_id_to', friendId)
+                  .where('user_id_from', userId)
+                  .limit(1)
+                  .into('users_friendships')
+                  .del();
+              })
+              .then(trx.commit)
+              .catch(trx.rollback);
+          })
+        }
+      });
+  },
+
   returnFriendships: (userId, state) => {
     if (state === 'request') {
       return pg('users_friendships')
         .select('users_friendships.state', 'users.id', 'users.username', 'users.first_name', 'users.last_name', 'users.picture_url')
-        .innerJoin('users', 'users.id', 'users_friendships.user_id_to')
+        .innerJoin('users', 'users.id', 'users_friendships.user_id_from')
         .where({'user_id_to': userId})
         .where({'state': 'request'})
     } else {

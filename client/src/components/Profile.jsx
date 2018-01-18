@@ -153,7 +153,21 @@ class Profile extends React.Component {
       })
   } 
 
-  removeFriend() {
+  removeFriend(friendId) {
+    let data = {
+      type: 'remove',
+      userId: this.state.loggedInUserId,
+      friendId: friendId
+    }
+
+    axios.patch('/api/friendship', data)
+      .then((response) => {
+        this.getFriendshipStatus(friendId);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+
     // No way currently. Ginger to do in V2. 
   }
 
