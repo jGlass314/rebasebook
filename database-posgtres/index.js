@@ -421,8 +421,6 @@ module.exports = {
   },
 
   removeFriendship: (userId, friendId) => {
-    console.log('inside remove');
-
     return module.exports.getFriendship(userId, friendId)
       .then((results) => {
         if (results === null || results === 'response needed' || results === 'friendship request ignored') {
@@ -453,7 +451,6 @@ module.exports = {
               .update({'state': 'request'})
               .transacting(trx)
               .then((results) => {
-                console.log('step one done')
                 return pg.where('user_id_to', friendId)
                   .where('user_id_from', userId)
                   .limit(1)

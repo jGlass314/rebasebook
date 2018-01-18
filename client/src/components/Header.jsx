@@ -15,10 +15,6 @@ class Header extends React.Component {
     }
   }
 
-  componentDidMount() {
-    console.log('header remount');
-  }
-
   getUserProfile(user) {
     this.props.getProfile(user);
   }
@@ -36,8 +32,6 @@ class Header extends React.Component {
     let icon = hasFriendRequests
       ? <Icon color='yellow' name='users' />
       : <Icon disabled name='users' />
-
-    let friendRequestList=<span>hi</span>
 
     return (
       <div className="global-header">
