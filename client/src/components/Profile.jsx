@@ -105,7 +105,6 @@ class Profile extends React.Component {
 
     axios.get('/api/friend_list', {params: params})
       .then((results) => {
-        console.log('friendlist on page', results);
         this.setState({
           friendList: results.data
         })

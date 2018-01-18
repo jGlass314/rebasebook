@@ -15,11 +15,13 @@ class Header extends React.Component {
     }
   }
 
+  componentDidMount() {
+    console.log('header remount');
+  }
+
   getUserProfile(user) {
     this.props.getProfile(user);
   }
-
-
 
   setSignedOut() {
     this.props.getSignedIn(false);
