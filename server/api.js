@@ -154,7 +154,7 @@ const api = {
       db.addFriendship(userId, friendId)
         .then((results) => {
           console.log(results);
-          res.status(200);
+          res.sendStatus(200);
         })
         .catch((err) => {
           res.status(500).json('unexpected server errror');
