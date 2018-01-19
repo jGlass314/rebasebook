@@ -40,7 +40,7 @@ passport.deserializeUser(function(user, done) {
 });
 
 app.post('/login',
-  passport.authenticate('local',), 
+  passport.authenticate('local'), 
   function(req, res) {
     // If this function gets called, authentication was successful.
     res.json(req.user)
