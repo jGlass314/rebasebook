@@ -61,7 +61,6 @@ class Feed extends React.Component {
   }
 
   render() {
-    console.log('Render Username ', this.state.username)
     return (
       <div className="feedContainer">
         <div className="feedSidebar">
