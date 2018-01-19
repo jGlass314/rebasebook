@@ -218,6 +218,5 @@ ChatWindow.Header = ChatHeader;
 ChatWindow.FriendSearch = ChatFriendSearch;
 ChatWindow.Feed = ChatFeed;
 ChatWindow.MessageInput = ChatMessageInput;
-ChatWindow.Button = ChatButton;
 
 export default ChatWindow;
