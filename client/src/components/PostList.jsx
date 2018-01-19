@@ -30,8 +30,8 @@ class PostList extends React.Component {
           name={this.props.name} />
         <br />
         {
-          this.props.postList.map((post, index) => (
-            <FadeIn key={index}>
+          this.props.postList.map((post) => (
+            <FadeIn key={post.post_id}>
               <div>
                 <Post
                   post={post}

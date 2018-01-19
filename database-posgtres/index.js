@@ -625,5 +625,51 @@ module.exports = {
     return pg('messages')
       .where({'chatId': chatId})
       .limit(50);
+  },
+
+  getPostByAuthorId: (authorId) => {
+    return pg('posts')
+      .select('posts.id as post_id', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+      .where({'user_id': authorId})
+      .innerJoin('users', 'posts.user_id', 'users.id')
+      .orderBy('post_id', 'desc');
+  },
+
+  // getPostsFromFriends: (userId) => {
+  //   return pg('users_friendships')
+  //   .select('users.id')
+  //   .innerJoin('users', 'users.id', 'users_friendships.user_id_to')
+  //   .where({'user_id_from': userId})
+  //   .where({'state': 'friend'})
+  //   .then((friendArray) => {
+  //     console.log(friendArray);
+  //     let flatfriends = friendArray.map((obj) => obj.id);
+  //     return pg('posts')
+  //       .select('posts.id as post_id', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+  //       .whereIn('user_id', flatfriends)
+  //       .innerJoin('users', 'posts.user_id', 'users.id')
+  //       .orderBy('post_id', 'desc');
+  //   })
+  // }, 
+
+  getAllPosts: () => {
+    return pg('posts')
+      .select('posts.id as post_id', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+      .innerJoin('users', 'posts.user_id', 'users.id')
+      .orderBy('post_id', 'desc');
+  },
+
+  getPostsFromFriends: (userId) => {
+    return pg('posts')
+      .select('posts.id as post_id', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+      .whereIn('user_id', function() {
+        this.select('users.id')
+          .from('users_friendships')
+          .innerJoin('users', 'users.id', 'users_friendships.user_id_to')
+          .where({'user_id_from': userId})
+          .where({'state': 'friend'})
+      })
+      .innerJoin('users', 'posts.user_id', 'users.id')
+      .orderBy('post_id', 'desc');
   }
 }

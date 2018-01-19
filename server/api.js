@@ -233,18 +233,20 @@ const api = {
 
       let userId = parseInt(req.query.userId);
       let type = req.query.type === 'requests' ? 'request' : 'friend';
+
       if (!userId) {
         res.status(400).json('bad request');
+      } else {
+        db.returnFriendships(userId, type)
+          .then((results) => {
+            res.status(200).json(results);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json('unexpected server errror');
+          });  
       }
 
-      db.returnFriendships(userId, type)
-        .then((results) => {
-          res.status(200).json(results);
-        })
-        .catch((err) => {
-          console.error(err);
-          res.status(500).json('unexpected server errror');
-        })
     }
   },
 
@@ -350,6 +352,24 @@ const api = {
 
   posts: {
 
+    getPostsByAuthorId: function(req, res) {
+      let authorId = req.params.authorId;
+
+      if (!authorId) {
+        res.status(400).json('bad request');
+      } else {
+        db.getPostByAuthorId(authorId)
+          .then((results) => {
+            res.status(200).json(results);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json('unexpected server errror');
+          })    
+      }
+
+    },
+
     getPosts: function (req, res) {
       db.getAllPosts((err, data) => {
         if (err) {
@@ -393,10 +413,47 @@ const api = {
           res.status(200).json(data);
         }
       })
+    },
+
+    getFeed: function(req, res) {
+      // Main Feed currently returns posts by Friends Only
+      let userId = parseInt(req.query.userId);
+      let friendsOnly = req.query.type === 'friends';
+
+      if (!userId) {
+        res.status(400).json('bad request');
+        return;
+      }
+
+      if (friendsOnly) {
+        db.getPostsFromFriends(userId)
+          .then((results) => {
+            res.status(200).json(results);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json('unexpected server errror');
+          })    
+      } else {
+        db.getAllPosts()
+          .then((results) => {
+            res.status(200).json(results);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json('unexpected server errror');
+          }) 
+      }
     }
   }
 };
 
+
+//POSTS
+route.get('/posts/:authorId', api.posts.getPostsByAuthorId); // CG - gets posts by authorID
+route.get('/myFeed', api.posts.getFeed); // CG - gets the ideal logged in feed for a user 
+
+//USERS
 route.get('/search/users', api.users.getUsers); //get all users
 route.get('/likes', api.post.getNumLikes); // get number of likes
 route.post('/likes/:author', api.post.likePost); //like a post
@@ -411,6 +468,7 @@ route.get('/friend_list', api.user.getAllFriends);
 route.get('/chats/:userId', api.chats.getChatSessions); //retrieve chat history of user
 route.get('/chat/:chatId', api.chat.getChatMessages); //retrieve messages from a chat session
 //USER
+
 // route.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),api.user.login); // varifies identity on login
 route.post('/friendship', api.user.addFriendship); // add a friendship between 2 users
 route.patch('/friendship', api.user.destroyFriendship); // destroy a friendship or a friendship request
@@ -418,26 +476,22 @@ route.get('/friendship', api.user.getFriendship); // returns the status of an ex
 route.get('/friend_list', api.user.getAllFriends); // returns a user's friends list, or if the type requests is sent, a friends-request list
 
 route.get('/:username/profilePage', api.user.getProfilePage); // get profilePage info for user
-route.get('/:username/friendsList/:otherUsername', api.user.getFriendsList); // get a friends friend list
+route.get('/:firstname/:lastname', api.user.getUsername); //gets the username of a user by first name, last name
+route.get('/likers', api.user.getLikers); // get all likers of a particular user
+
 route.get('/:username/likes', api.user.getLiked); //get liked users of user
 route.get('/:username/profile/:user', api.user.getProfile); //get profile of a specific user
 route.get('/:username', api.user.getUser); //gets a user
 
-route.post('/:username/addFriend/:friendToAdd', api.user.addFriend); //add friend to user
-route.post('/:username/removeFriend/:friendToRemove', api.user.removeFriend); //remove friend from user's friends list
-route.post('/:username', api.user.createUser); //creates a new user line 81
+route.post('/:username', api.user.createUser); //creates a new user
 route.patch('/:username/updateProfile', api.user.updateProfile); //update current user's profile
 
-
-//USERS
 
 //POST
 route.get('/:username/post/author', api.post.getAuthor); // gets the auther of a post
 route.post('/:username/posts', api.post.createPost); // create new post
 
 //POSTS
-route.get('/:username/posts/friends', api.posts.getFriendsPosts); //get posts of all friends
-route.get('/:username/posts/nonFriends', api.posts.getNonFriendsPosts); //get posts of non friends
 route.get('/:username/posts', api.posts.getPosts); //get posts for the user
 route.get('/:username/posts/:certainUser', api.posts.getUserPosts); // get posts for a specified user
 

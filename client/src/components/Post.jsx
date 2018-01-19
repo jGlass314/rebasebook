@@ -147,12 +147,12 @@ class Post extends React.Component {
               </Button>
               <ReactTooltip />
               <Button className="commentButton">
-                1 Comment
+                0 Comments
               </Button>
             </div>
             <hr className="postBottomHorizontal" />
           </div>
-          <div className="postCommentOverall">
+          {/*<div className="postCommentOverall">
             <div className="commentOverall">
               <div className="commentHeader">
                 <img className="commentPic" src="https://pbs.twimg.com/profile_images/926008201127931904/MQI9hqOg.jpg"/>
@@ -164,7 +164,7 @@ class Post extends React.Component {
                 </div>
               </div>
             </div>
-          </div>
+          </div>*/}
         </Card>
       </div>
     )
