@@ -46,7 +46,6 @@ const api = {
     },
 
     getLikers: function (req, res) {
-      console.log("query text", req.query)
       db.getLikers(req.query.text, (err, data) => {
         if (err) {
           res.status(404).send(err);
