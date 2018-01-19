@@ -7,7 +7,6 @@ import ChatFeed from './ChatFeed.jsx';
 import ChatMessageInput from './ChatMessageInput.jsx';
 import ChatHistory from './ChatHistory.jsx';
 import ChatOnlineUsers from './ChatOnlineUsers.jsx';
-import ChatButton from './ChatButton.jsx';
 import io from 'socket.io-client';
 import http from 'axios';
  
@@ -219,6 +218,5 @@ ChatWindow.Header = ChatHeader;
 ChatWindow.FriendSearch = ChatFriendSearch;
 ChatWindow.Feed = ChatFeed;
 ChatWindow.MessageInput = ChatMessageInput;
-ChatWindow.Button = ChatButton;
 
 export default ChatWindow;

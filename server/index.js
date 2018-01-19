@@ -18,9 +18,9 @@ app.use('/:username', express.static(__dirname + '/../client/dist'));
 app.use('/api', api);
 
 
-let port = 3000;
+let port = process.env.PORT || 3000;
 
-server.listen(process.env.PORT || port, function() {
+server.listen(port, function() {
   console.log(`listening on port ${port}`);
 });
 

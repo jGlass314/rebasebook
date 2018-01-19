@@ -63,7 +63,6 @@ module.exports = {
     });
   },
   createPost: (username, text, callback) => {
-    // console.log('This is my client', client);
     let queryStr =
       `INSERT INTO posts (post_text, user_id)
       VALUES ('${text}', (SELECT id FROM users WHERE username = '${username}'))`;
@@ -185,7 +184,6 @@ module.exports = {
   },
   //retrieves all users
   getAllUsers: (callback) => {
-    // console.log('in db getUser, looking for', username)
     client.query(`SELECT * FROM users;`, (err, res) => {
       if (err) {
         console.log(err.message)
@@ -273,7 +271,6 @@ module.exports = {
     });
   },
   getFriendsList: (username, callback) => {
-    // console.log('in db getFriendsList')
     let queryStr = `SELECT users.* FROM users INNER JOIN user_friends ON (user_friends.friend_id = users.id) WHERE user_friends.username = '${username}';`
     client.query(queryStr, (err, res) => {
       if (err) {
@@ -285,7 +282,6 @@ module.exports = {
     });
   },
   findPostsByFriends: (username, callback) => {
-    // console.log('in db findPostsByFriends')
     let queryStr =
     `SELECT posts.*, users.username, users.id, users.first_name, users.last_name FROM posts INNER JOIN 
     users ON users.id = posts.user_id INNER JOIN user_friends ON 
@@ -310,8 +306,7 @@ module.exports = {
       if (err) {
         console.log('Error', err)
         callback(err, null);
-      } else {  
-        // console.log('res', res);
+      } else {
         callback(null, res.rows);
       }  
     });
@@ -323,12 +318,12 @@ module.exports = {
       if (err) {
         console.log('Error', err)
         callback(err, null);
-      } else {  
+      } else {
         client.query(queryTwo, (err, res) => {
           if (err) {
             console.log('Error', err)
             callback(err, null);
-          } else {  
+          } else {
             callback(null, res.rows);
           }  
         });
@@ -340,8 +335,7 @@ module.exports = {
     client.query(query, (err, res) => {
       if (err) {
         callback(err, null);
-      } else {  
-        // console.log('res', res);
+      } else {
         callback(null, res.rows);
       }  
     });
@@ -495,15 +489,51 @@ module.exports = {
           // do nothing.
           return;
         } else if (results === 'response pending') {
+          let deleteInfo = {};
+          // delete friend request from notifications_friendships
+          return pg.select('id')
+            .from('users_friendships')
+            .where('user_id_from', userId)
+            .andWhere('user_id_to', friendId)
+          .then(friendshipsId => {
+            deleteInfo.friendshipsId = friendshipsId[0].id;
+            return pg.select('notifications_id', 'seen')
+              .from('notifications_friendships')
+              .innerJoin('notifications', 'notifications.id', 'notifications_friendships.notifications_id')
+              .where('friendships_id', deleteInfo.friendshipsId)
+          })
+          .then(notifications => {
+            deleteInfo.notificationsId = notifications[0].notifications_id;
+            deleteInfo.seen = notifications[0].seen;
+            // only delete if not seen
+            if(!deleteInfo.seen) {
+              return pg('notifications_friendships')
+                .where('friendships_id', deleteInfo.friendshipsId)
+                .limit(1)
+                .del();
+            }
+          })
+          // delete friend request from notifications
+          .then(() => {
+            // only delete if not seen
+            if(!deleteInfo.seen) {
+              return pg('notifications')
+                .where('id', deleteInfo.notificationsId)
+                .limit(1)
+                .del()
+            }
+          })
+          // TODO: Implement socket.io updating requestee's notifications so that their counter will drop.
+          .then(() => {
           // If userId is undoing their friend request
           // delete that friend request
-
-          return pg('users_friendships')
-            .where('user_id_from', userId)
-            .where('user_id_to', friendId)
-            .where('state', 'request')
-            .limit(1)
-            .del();
+            return pg('users_friendships')
+              .where('user_id_from', userId)
+              .where('user_id_to', friendId)
+              .where('state', 'request')
+              .limit(1)
+              .del();
+          })
 
         } else if (results === 'friends') {
 
