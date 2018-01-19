@@ -11,9 +11,10 @@ class NewUser extends React.Component {
     // seeded from login field.
 
     this.state = {
-      username: this.props.username,
-      firstName: undefined,
-      lastName: undefined,
+      username: '',
+      password: '',
+      firstName: '',
+      lastName: '',
       pictureUrl: '/images/profile_default.jpg',
       redirect: false,
       invalidInput: false,
@@ -97,6 +98,12 @@ class NewUser extends React.Component {
               type="text" 
               onChange={this.handleInputChange.bind(this)} 
               placeholder="Username"/>
+            <Input 
+              className="newUserInput" 
+              name="password" 
+              type="password" 
+              onChange={this.handleInputChange.bind(this)} 
+              placeholder="Password"/>
             <Input 
               className="newUserInput"
               name="firstName"

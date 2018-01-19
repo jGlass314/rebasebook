@@ -219,7 +219,7 @@ module.exports = {
   },
   //add user to db
   addUser: (userData, callback) => {
-    client.query(`INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('${userData.username}', '${userData.firstName}', '${userData.lastName}', '${userData.pictureUrl}');`, (err, res) => {
+    client.query(`INSERT INTO users (username, first_name, last_name, picture_url, password) VALUES ('${userData.username}', '${userData.firstName}', '${userData.lastName}', '${userData.pictureUrl}', ${userData.password});`, (err, res) => {
       if (err) {
         callback(err.detail, null);
       } else {  
@@ -233,7 +233,7 @@ module.exports = {
     defaultProfile = JSON.stringify(defaultProfile);
     client.query(`INSERT INTO user_profiles (user_id, user_data) VALUES ((SELECT id FROM users WHERE username='${username}'), '${defaultProfile}')`, (err, res) => {
       if (err) {
-        console.log(err.message);
+        console.error(err.message);
         callback(err, null);
       } else {  
         callback(null, res.rows);

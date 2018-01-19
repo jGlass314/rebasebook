@@ -87,11 +87,11 @@ const api = {
           firstName: req.body.firstName,
           lastName: req.body.lastName
         }
-        db.addUser(newUserData, (err, data) => {
+        db.addUser(newUserData, (err, data) => { // line 221
           if (err) {
             res.status(500).json(err);
           } else {
-            db.addNewUserProfileInfo(newUserData.username, (err, data) => {
+            db.addNewUserProfileInfo(newUserData.username, (err, data) => { // line 230
               if (err) {
                 res.status(404).send(err);
               } else {
@@ -424,7 +424,7 @@ route.get('/:username', api.user.getUser); //gets a user
 
 route.post('/:username/addFriend/:friendToAdd', api.user.addFriend); //add friend to user
 route.post('/:username/removeFriend/:friendToRemove', api.user.removeFriend); //remove friend from user's friends list
-route.post('/:username', api.user.createUser); //creates a new user
+route.post('/:username', api.user.createUser); //creates a new user line 81
 route.patch('/:username/updateProfile', api.user.updateProfile); //update current user's profile
 
 

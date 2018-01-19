@@ -18,17 +18,13 @@ class SignIn extends React.Component {
       undefinedPassword: false,
     };
   }
-
-  handleUsernameInput (e) { 
+  handleFormInput(event) {
+    event.preventDefault();
+    const value = event.target.value;
+    const name = event.target.name;
     this.setState({
-      username: e.target.value,
+      [name]: value,
       usernameError: false
-    });
-  }
-
-  handlePasswordInput (e) { 
-    this.setState({
-      password: e.target.value,
     });
   }
   
@@ -40,17 +36,18 @@ class SignIn extends React.Component {
   }
 
   handleLogIn(e) {
+    var {username, password} = this.state;
     e.preventDefault();
 
     // If the user has not entered a username, show error
-    if (!this.state.username || !this.state.password) {
+    if (!username || !password) {
       this.setState({
-        undefinedUsername: Boolean(!this.state.username),
-        undefinedPassword: Boolean(!this.state.password)
+        undefinedUsername: Boolean(!username),
+        undefinedPassword: Boolean(!password)
       });
     } else {
       // otherwise attempt to log user in
-      this.logUserIn();
+      this.logUserIn(username, password);
     }  
   }
 
@@ -58,11 +55,11 @@ class SignIn extends React.Component {
     this.setState({
       undefinedUsername: false,
       undefinedPassword: false,
+      usernameError: false,
     })
   }
 
-  logUserIn() {
-    var {username, password} = this.state;
+  logUserIn(username, password) {
     this.resetErrors();
 
     $.post(`/login`, {username: username, password: password}, (data) => {
@@ -126,8 +123,9 @@ class SignIn extends React.Component {
               }
               <Input 
                 className="username-input"
+                name="username"
                 type="text"
-                onChange={this.handleUsernameInput.bind(this)}
+                onChange={this.handleFormInput.bind(this)}
               />
 
               <h5 className="signInLabel bottom aligned content">Password</h5>
@@ -138,8 +136,9 @@ class SignIn extends React.Component {
               }
               <Input 
                 className="username-input"
+                name="password"
                 type="password"
-                onChange={this.handlePasswordInput.bind(this)}
+                onChange={this.handleFormInput.bind(this)}
               />
 
               <Link 
