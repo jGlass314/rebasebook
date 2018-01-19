@@ -170,9 +170,6 @@ class ChatWindow extends React.Component {
     return <ChatOnlineUsers users={users} />
   }
 
-  renderChatList(active) {
-    return false;
-  }
   renderChatWindow(active) {
 
     let chatHeaderText,
@@ -212,7 +209,6 @@ class ChatWindow extends React.Component {
             on='click'
           />          
         </div>
-        {this.renderChatList(this.state.displayList)}
         {this.renderChatWindow(this.state.displayChat)}
       </div>
     )

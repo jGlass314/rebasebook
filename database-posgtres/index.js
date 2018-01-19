@@ -548,53 +548,51 @@ module.exports = {
   }, 
 
   addUserChatSession: (user1, user2) => {
-    // var newChat = {
-    //   user_1: user1,
-    //   user_2: user2
-    // };
+    var newChat = {
+      user_1: user1,
+      user_2: user2
+    };
 
-    // return pg('chats')
-    //   .modify(includesUserInChat, user1)
-    //   .modify(includesUserInChat, user2)
-    //   .then((results) => {
+    return pg('chats')
+      .modify(includesUserInChat, user1)
+      .modify(includesUserInChat, user2)
+      .then((results) => {
         
-    //     //check for existing user chat session
-    //     if (results.length) {
-    //       return results[0].id
-    //     }
+        //check for existing user chat session
+        if (results.length) {
+          return results[0].id
+        }
 
-    //     return pg.transaction((trx) => {
-    //       return trx
-    //         .insert(newChat)
-    //         .into('chats')
-    //         .returning('id')   
-    //     });
-    // });
+        return pg('chats')
+          .insert(newChat)
+          .returning('id')   
+      });
   },
-  
-  addChatMessage: (chatSessionId, message) => {
-    // let newMessage = {
-    //   created_at: Date.now(),
-    //   chat_id: chatSessionId,
-    //   text: message.text,
-    //   authord_id: message.from
-    // }
 
-    // return pg.transaction((trx) => {
-    //   return trx
-    //     .insert(message)
-    //     .into('messages')
-    //     .returning('id')
-    // })
+  
+  addChatMessage: (chatId, message) => {
+    let newMessage = {
+      chat_id: chatId,
+      text: message.text,
+      authord_id: message.from
+    }
+
+    return pg('messages')
+      .insert(message)
+      .returning('id')
+      .catch(err => console.log(err.message));
   },
 
   getUserChatSessions: (userId) => {
-    // return pg('chats')
-    //   .select('chats.id', 'users.id', 'users.picture_url', 'users.first_name', 'users.last_name', 'users.username')
-    //   .innerJoin('users', function() {
-    //     this.on('chats.user_1', '=', 'users.id').orOn('chats.user_2', '=', 'users.id')
-    //   })
-    //   .where({'user_1': userId})
-    //   .orWhere({'user_2': userId});
+    return pg('chats')
+      .select('*')  
+      .where({'user_1': userId})
+      .orWhere({'user_2': userId})
+  },
+
+  getChatMessages: (chatId) => {
+    return pg('messages')
+      .where({'chatId': chatId})
+      .limit(50);
   }
 }
