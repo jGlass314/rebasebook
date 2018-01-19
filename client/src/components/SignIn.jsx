@@ -105,20 +105,50 @@ class SignIn extends React.Component {
         </div>
         <div className="right-column">
           <h3 id="sign-in"> Sign In </h3>
-          <form action="/login" method="post" onSubmit={this.handleSubmit.bind(this)}>
+          <form 
+            action="/login" 
+            method="post" 
+            onSubmit={this.handleSubmit.bind(this)}
+          >
           <Card className="signIn-card">
 
             <h5 className="signInLabel bottom aligned content">Username</h5>
-            {this.state.undefinedUsername && <h5 className="undefined-user-error"><Icon name="warning circle"/>Please enter your username.</h5>}
-            <Input className="username-input" type="text" onChange={this.handleUsernameInput.bind(this)}/>
+            {this.state.undefinedUsername && 
+              <h5 className="undefined-user-error">
+                <Icon name="warning circle"/>Please enter your username.
+              </h5>}
+            <Input 
+              className="username-input" 
+              type="text" 
+              onChange={this.handleUsernameInput.bind(this)}/>
 
             <h5 className="signInLabel bottom aligned content">Password</h5>
-            {this.state.undefinedPassword && <h5 className="undefined-user-error"><Icon name="warning circle"/>Please enter your password.</h5>}
-            <Input className="username-input" type="password" onChange={this.handlePasswordInput.bind(this)}/>
+            {this.state.undefinedPassword && 
+              <h5 className="undefined-user-error">
+                <Icon name="warning circle"/>
+                Please enter your password.
+              </h5>}
+            <Input 
+              className="username-input" 
+              type="password" 
+              onChange={this.handlePasswordInput.bind(this)}/>
 
-            <Link onClick={this.handleLogIn.bind(this)} to={feedPath}><Button className="login-button" id="login"> Log In </Button></Link>
+            <Link 
+              onClick={this.handleLogIn.bind(this)} 
+              to={feedPath}>
+              <Button className="login-button" id="login" type="submit"> 
+                Log In 
+              </Button>
+            </Link>
             <div id="create-account-text">Don't have an account yet?</div>
-            <div><Button className="login-button" id="create-new-account" onClick={this.handleSignUp.bind(this)}>Sign Up</Button></div>
+            <div>
+              <Button 
+                className="login-button" 
+                id="create-new-account" 
+                onClick={this.handleSignUp.bind(this)}>
+                Sign Up
+              </Button>
+            </div>
           </Card>
           {this.state.newUser && 
             <NewUser 
