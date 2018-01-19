@@ -1,47 +1,18 @@
 import React from 'react';
 import { Feed } from 'semantic-ui-react'
+import ChatMessage from './ChatMessage.jsx';
 
-const image = 'https://semantic-ui.com/images/avatar/large/elliot.jpg'
-const date = '3 days ago'
-const summary = 'Laura Faucet created a post'
-const extraText = "Have you seen what's going on in Israel? Can you believe it."
-
-class ChatFeed extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-
-    return (
+const ChatFeed  = (props) => {
+  
+  return (
+    <div className='chatFeed'>
       <Feed>
-        <Feed.Event
-          image={image}
-          date={date}
-          summary={summary}
-          extraText={extraText}
-        />
-
-        <Feed.Event>
-          <Feed.Label image={image} />
-          <Feed.Content
-            date={date}
-            summary={summary}
-            extraText={extraText}
-          />
-        </Feed.Event>
-
-        <Feed.Event>
-          <Feed.Label image={image} />
-          <Feed.Content>
-            <Feed.Date content={date} />
-            <Feed.Summary content={summary} />
-            <Feed.Extra text content={extraText} />
-          </Feed.Content>
-        </Feed.Event>
+        {props.messages.map((message, index) => (
+          <ChatMessage key={index} message={message} />
+        ))}
       </Feed> 
-    );
-  }
+    </div>
+  );
 }
 
 export default ChatFeed;

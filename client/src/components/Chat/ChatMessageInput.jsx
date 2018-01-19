@@ -1,20 +1,38 @@
 import React from 'react';
-import { TextArea } from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
 
 class ChatMessageInput extends React.Component {
 
-  onInput(e, {value}) {
-    console.log('onInput ', value);
+  constructor(props) {
+    super(props);
+  
+    this.state = {
+      text: ''
+    };
+
+    this.onChange = this.onChange.bind(this);
+    this.onSend = this.onSend.bind(this);
+  }
+
+  onSend(e, {value}) {
+    this.props.onSubmit(this.state.text);
   }
 
   onChange(e, {value}) {
-    console.log('onChange ', value);
+    this.setState({
+      text: value
+    });
   }
 
   render() {
 
     return (
-      <TextArea autoHeight value={this.state.text} onChange={this.props.onChange} />
+      <Form>
+        <Form.Group inline>
+          <Form.Input value={this.state.text} onChange={this.onChange} />
+          <Form.Button onClick={this.onSend}>Send</Form.Button>
+        </Form.Group>
+      </Form>
     );
   }
 }

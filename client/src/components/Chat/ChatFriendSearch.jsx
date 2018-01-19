@@ -1,36 +1,42 @@
 import _ from 'lodash'
 import React from 'react'
-import { Search } from 'semantic-ui-react'
+import { Search, Grid } from 'semantic-ui-react'
 import http from 'axios';
 
 class ChatFriendSearch extends React.Component {
   
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.handleResultSelect = this.handleResultSelect.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
+
+    this.state = {
+      isLoading: false,
+      result: [],
+      value: ''
+    };
   }
+
   componentWillMount() {
     this.resetComponent()
   }
 
   componentDidMount() {
     this.getAllUsers();
-    console.log(this.state)
   }
 
   getAllUsers() {
     //var user = this.state.username;
     http.get(`/api/search/users`)
       .then((response) => {
-        console.log('Response back from /search ', response);
         let searchNames = response.data.map(function (user) {
           return {
             "title": user.first_name + ' ' + user.last_name,
             "description": user.username
           }
         });
+
         this.setState({
           source: searchNames
         });
@@ -50,10 +56,13 @@ class ChatFriendSearch extends React.Component {
 
   handleResultSelect(e, { result }) {
     this.setState({ 
-      value: result.title 
+      value: result.description 
     });
 
-    this.props.onSelect(result.title);
+    this.props.onSelect({
+      name: result.title,
+      username: result.description
+    });
   };
 
   handleSearchChange(e, { value }) {
@@ -77,17 +86,24 @@ class ChatFriendSearch extends React.Component {
   }
 
   render() {
+
+    //still waiting for user data from server
+    if (!this.state.source) {
+      return null;
+    }
+
     const { isLoading, value, results } = this.state
 
     return (
-      <Search
-        loading={isLoading}
-        onResultSelect={this.handleResultSelect}
-        onSearchChange={this.handleSearchChange}
-        results={results}
-        value={value}
-        {...this.props}
-      />
+      <div className='chatFriendSearch'>
+        <Search
+          loading={isLoading}
+          onResultSelect={this.handleResultSelect}
+          onSearchChange={this.handleSearchChange}
+          results={results}
+          value={value}
+        />
+      </div>
     )
   }
 }

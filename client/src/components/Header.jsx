@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button, Popup, Icon, List, Image } from 'semantic-ui-react';
+import SearchBar from './Search.jsx';
+import ChatWindow from './Chat/ChatWindow.jsx';
 import { Link, Redirect } from 'react-router-dom';
 import FriendRequestList from './FriendRequestList.jsx';
-import SearchBar from './Search.jsx';
 
 class Header extends React.Component {
   constructor(props) {
@@ -59,6 +60,7 @@ class Header extends React.Component {
                   <span className="headerFont">Feed</span>
                 </button>
               </Link>
+              <ChatWindow userId={this.props.userId} username={this.props.name} />
             </div>
           </div>
         }

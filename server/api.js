@@ -17,7 +17,6 @@ const api = {
 
     getProfilePage: function(req, res) {
       var username = req.params.username;
-      console.log('Username request received: ', username)
       db.getProfilePageInfo(username, (err, data) => {
         if (err) {
           res.status(500).send(err);
@@ -313,6 +312,34 @@ const api = {
     },
   },
 
+  chats: {
+
+    getChatSessions: function (req, res) {
+      db.getUserChatSessions(req.params.userId, (err, data) => {
+        if (err) {
+          console.log(err.message);
+          res.status(400).send('Unable to retrieve users chat sessions');
+        } else {
+           res.status(200).send(data);
+        }
+      });
+    }
+  },
+
+  chat: {
+
+    getChatMessages: function(req, res) {
+      db.getChatMessages(req.params.chatId, (err, data) => {
+        if (err) {
+          console.log(err.message);
+          res.status(400).send('Unable to retrieve users chat sessions');
+        } else {
+          res.status(200).send(data);
+        }
+      })
+    }
+  },
+
   posts: {
 
     getPosts: function (req, res) {
@@ -362,9 +389,19 @@ const api = {
   }
 };
 
-//USERS
 route.get('/search/users', api.users.getUsers); //get all users
+route.get('/likes', api.post.getNumLikes); // get number of likes
+route.post('/likes/:author', api.post.likePost); //like a post
+route.delete('/likes/:author', api.post.unlikePost); //unlike a post
+route.get('/likers', api.user.getLikers); // get all likers of a particular user
+route.post('/friendship', api.user.addFriendship); // CG: ginger's new friendship endpoint
+route.get('/friendship', api.user.getFriendship); // CG: This endpoint returns the status of an existing friendship request between two users.
+route.get('/friend_list', api.user.getAllFriends);
 
+
+//CHATS
+route.get('/chats/:userId', api.chats.getChatSessions); //retrieve chat history of user
+route.get('/chat/:chatId', api.chat.getChatMessages); //retrieve messages from a chat session
 //USER
 route.post('/friendship', api.user.addFriendship); // add a friendship between 2 users
 route.patch('/friendship', api.user.destroyFriendship); // destroy a friendship or a friendship request
@@ -373,8 +410,6 @@ route.get('/friend_list', api.user.getAllFriends); // returns a user's friends l
 
 route.get('/:username/profilePage', api.user.getProfilePage); // get profilePage info for user
 route.get('/:username/friendsList/:otherUsername', api.user.getFriendsList); // get a friends friend list
-route.get('/:firstname/:lastname', api.user.getUsername); //gets the username of a user by first name, last name
-route.get('/likers', api.user.getLikers); // get all likers of a particular user
 route.get('/:username/likes', api.user.getLiked); //get liked users of user
 route.get('/:username/profile/:user', api.user.getProfile); //get profile of a specific user
 route.get('/:username', api.user.getUser); //gets a user
@@ -384,12 +419,12 @@ route.post('/:username/removeFriend/:friendToRemove', api.user.removeFriend); //
 route.post('/:username', api.user.createUser); //creates a new user
 route.patch('/:username/updateProfile', api.user.updateProfile); //update current user's profile
 
+
+//USERS
+
 //POST
-route.get('/likes', api.post.getNumLikes); // get number of likes
 route.get('/:username/post/author', api.post.getAuthor); // gets the auther of a post
-route.post('/likes/:author', api.post.likePost); //like a post
 route.post('/:username/posts', api.post.createPost); // create new post
-route.delete('/likes/:author', api.post.unlikePost); //unlike a post
 
 //POSTS
 route.get('/:username/posts/friends', api.posts.getFriendsPosts); //get posts of all friends
@@ -397,5 +432,6 @@ route.get('/:username/posts/nonFriends', api.posts.getNonFriendsPosts); //get po
 route.get('/:username/posts', api.posts.getPosts); //get posts for the user
 route.get('/:username/posts/:certainUser', api.posts.getUserPosts); // get posts for a specified user
 
+route.get('/:firstname/:lastname', api.user.getUsername); //gets the username of a user by first name, last name
 
 module.exports = route;

@@ -32,7 +32,7 @@ class PostList extends React.Component {
         {
           this.props.postList.map((post, index) => (
             <FadeIn key={index}>
-              <div key={index}>
+              <div>
                 <Post
                   post={post}
                   authorId = {post.user_id}

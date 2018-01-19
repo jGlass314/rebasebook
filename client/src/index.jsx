@@ -18,7 +18,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <Main />
+      <Main {...this.props} />
     )
   }
 }

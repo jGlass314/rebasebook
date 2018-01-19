@@ -49,11 +49,7 @@ body {
   padding-bottom: 20px;
   margin-bottom: 20px;
 }
-.header {
-  height: 47px;
-  background-color: #3b5998;
-  margin-bottom: 20px;
-}
+
 .header-btn {
   margin-right: 140px;
 }
@@ -613,6 +609,60 @@ textarea {
   width: 35%;
 }
 
+/******************************************** Chat Component ******************************************************/
+
+.chatFriendSearch {
+  background-color: rgb(224, 225, 226);
+  vertical-align: 'middle'
+}
+
+.chatHeader {
+  background-color: #3F5FA4;
+  color: rgb(255, 255, 255);
+  height: 3rem;
+  vertical-align: 'middle';
+}
+
+.ui.icon.right.floated.button.chatCloseButton {
+  background-color: rgba(0, 0, 0, 0.0);
+  vertical-align: 'middle';
+  color: rgb(255, 255, 255);
+}
+
+.chatFeed {
+  min-height: 20rem;
+}
+
+.chatcontainer {
+  position: fixed;
+  bottom: 0px;
+  left: 100px;
+  min-width: 30rem;
+  max-width: 50rem;
+  z-index: 10;
+}
+
+.chatonlineusers {
+  position: fixed;
+  bottom: 0px;
+  left: 10px;
+  min-width: 30rem;
+  max-width: 50rem;
+  min-height: 20rem;
+}
+
+.chatbutton {
+  margin-top: 15px;
+  float: right;
+  width: 40x;
+  height: 40px;
+  color: white;
+  background: transparent;
+  border-style: none;
+  cursor: pointer;
+}
+
+
 /******************************************** Feed Component ******************************************************/
 
 .feedContainer {
@@ -676,6 +726,7 @@ textarea {
   padding-right: 10px;
   margin-bottom: 17.5px;
 }
+
 .feedTrendingLabel {
   margin-bottom: -5px;
 }

@@ -3,7 +3,6 @@ import CreatePost from './CreatePost.jsx';
 import PostList from './PostList.jsx';
 import Profile from './Profile.jsx';
 import FBHeader from './Header.jsx';
-import ChatWindow from './Chat/ChatWindow.jsx';
 import axios from 'axios';
 import FriendsList from './FriendList.jsx'
 import { Button, Icon, Image, Header, List, Item, Divider, Menu, Advertisement } from 'semantic-ui-react';
@@ -117,10 +116,6 @@ class Feed extends React.Component {
             getAllPosts={this.getAllPosts.bind(this)} 
             name={this.state.username} />
         </div>
-
-        {/*<div className="chat">
-          <ChatWindow />
-          </div>*/}
 
         <div className="feedSidebar">
           {/*<FriendsList friends={this.state.friends} />
