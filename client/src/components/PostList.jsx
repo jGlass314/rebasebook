@@ -34,6 +34,7 @@ class PostList extends React.Component {
             <FadeIn key={post.post_id}>
               <div>
                 <Post
+                  username={this.props.name}
                   post={post}
                   authorId = {post.user_id}
                   authorUsername= {post.username}

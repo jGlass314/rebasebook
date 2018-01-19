@@ -34,16 +34,6 @@ INSERT INTO posts (user_id, post_text) VALUES (3, 'ryan ngo post');
 INSERT INTO posts (user_id, post_text) VALUES (4, 'kaitlyn menghini post');
 INSERT INTO posts (user_id, post_text) VALUES (5, 'shubhra jain post');
 
-DROP TABLE IF EXISTS user_friends CASCADE;
-CREATE TABLE user_friends (
-    id SERIAL PRIMARY KEY UNIQUE,
-    username VARCHAR(25) REFERENCES users(username) NOT NULL,
-    friend_id INTEGER REFERENCES users(id) NOT NULL
-);
-
-INSERT INTO user_friends (username, friend_id) VALUES ('mattupham', 2);
-INSERT INTO user_friends (username, friend_id) VALUES ('albertchanged', 1);
-
 DROP TABLE IF EXISTS users_friendships CASCADE;
 CREATE TABLE users_friendships (
     id SERIAL PRIMARY KEY UNIQUE,

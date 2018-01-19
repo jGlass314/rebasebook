@@ -1,9 +1,73 @@
 const route = require('express').Router();
 const db = require('../database-posgtres/index.js');
 const passport = require ('passport');
+const multer  = require('multer');
+const aws = require('aws-sdk');
+const md5 = require('md5');
+const moment = require('moment');
+
+// Set up S3 
+var s3 = new aws.S3({
+  accessKeyId: process.env.S3_KEY,
+  secretAccessKey: process.env.S3_SECRET,
+  region: 'us-west-2'
+})
+
+var grabImage = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 52428800 },
+});
+
+
+
+let uploadImage = function(image) {
+  let originalFileName = image.originalname;
+  // Make unique filename with timestamp
+  let timestamp = moment().format();
+  let hash = md5(originalFileName + timestamp).substring(0, 10);
+  let fileNameWithHash = hash + '-' + originalFileName;
+  console.log('made it here')
+  let params = {
+    Bucket: 'rebasebook/images',
+    ContentType: image.mimetype,
+    Key: fileNameWithHash,
+    Body: image.buffer
+  };
+
+  return s3.putObject(params).promise()
+  .then(result => {
+    return `https://rebasebook.s3.amazonaws.com/images/${fileNameWithHash}`;
+  })
+}
+
+// ---- 
+>>>>>>> upload images working
 
 
 const api = {
+
+  image: {
+    addImage: function(req, res) {
+      if (!req.file || !req.file.fieldname === 'sharedImage') {
+        return res.status(403).send('expect 1 file upload');
+      }
+
+      uploadImage(req.file)
+        .then((url) => {
+          console.log('should error url here', url);
+          res.sendStatus(200);
+        })
+        .catch((err) => {
+          console.error('error uploading to S3', err);
+          res.sendStatus(500).json('unexpected server errror');
+        })
+     
+    },
+
+    deleteImage: (req, res) => {
+
+    }
+  },
 
   user: {
     // login: function(req, res) {
@@ -449,9 +513,17 @@ const api = {
 };
 
 
+<<<<<<< HEAD
+=======
+//IMAGE HANDLINE
+route.post('/uploadImage', grabImage.single('sharedImage'), api.image.addImage); // uploads image to CDN and returns URL
+route.patch('/deleteImage', api.image.deleteImage); // deletes image at a particular CDN url
+
+>>>>>>> upload images working
 //POSTS
 route.get('/posts/:authorId', api.posts.getPostsByAuthorId); // CG - gets posts by authorID
 route.get('/myFeed', api.posts.getFeed); // CG - gets the ideal logged in feed for a user 
+
 
 //USERS
 route.get('/search/users', api.users.getUsers); //get all users

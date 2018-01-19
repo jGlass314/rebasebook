@@ -257,6 +257,7 @@ module.exports = {
       }
     });
   },
+<<<<<<< HEAD
   //add 2 rows to user_friends table
   addFriend: (username1, username2, callback) => {
     let queryStr = `INSERT INTO user_friends (username, friend_id)
@@ -331,6 +332,8 @@ module.exports = {
       }  
     });
   },
+=======
+>>>>>>> upload images working
   getProfilePageInfo: (username, callback) => {
     var query = `SELECT * from user_profiles WHERE user_id = (SELECT id FROM users WHERE username = '${username}')`;
     client.query(query, (err, res) => {
@@ -629,39 +632,22 @@ module.exports = {
 
   getPostByAuthorId: (authorId) => {
     return pg('posts')
-      .select('posts.id as post_id', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
       .where({'user_id': authorId})
       .innerJoin('users', 'posts.user_id', 'users.id')
       .orderBy('post_id', 'desc');
   },
 
-  // getPostsFromFriends: (userId) => {
-  //   return pg('users_friendships')
-  //   .select('users.id')
-  //   .innerJoin('users', 'users.id', 'users_friendships.user_id_to')
-  //   .where({'user_id_from': userId})
-  //   .where({'state': 'friend'})
-  //   .then((friendArray) => {
-  //     console.log(friendArray);
-  //     let flatfriends = friendArray.map((obj) => obj.id);
-  //     return pg('posts')
-  //       .select('posts.id as post_id', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
-  //       .whereIn('user_id', flatfriends)
-  //       .innerJoin('users', 'posts.user_id', 'users.id')
-  //       .orderBy('post_id', 'desc');
-  //   })
-  // }, 
-
   getAllPosts: () => {
     return pg('posts')
-      .select('posts.id as post_id', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
       .innerJoin('users', 'posts.user_id', 'users.id')
       .orderBy('post_id', 'desc');
   },
 
   getPostsFromFriends: (userId) => {
     return pg('posts')
-      .select('posts.id as post_id', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
       .whereIn('user_id', function() {
         this.select('users.id')
           .from('users_friendships')
