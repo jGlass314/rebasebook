@@ -83,6 +83,7 @@ class SignIn extends React.Component {
 
       } else {
         // Failed Login 
+        console.log(data)
         data.type === 'username' 
         ?
         this.setState({

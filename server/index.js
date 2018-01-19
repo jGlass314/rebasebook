@@ -19,7 +19,7 @@ app.use(passport.session());
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    db.getUser({ username: username }, function(err, user) {
+    db.getUser(username, function(err, user) {
       if (err) { return done(err); }
       if (!user.length) {
         return done(null, { type: 'username', message: 'Incorrect username.' });
