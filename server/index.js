@@ -10,6 +10,8 @@ app.use(morgan('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Passport //
+//////////////////////////////////////
 const passport = require('passport') 
 const LocalStrategy = require('passport-local').Strategy;
 app.use(passport.initialize());
@@ -17,22 +19,33 @@ app.use(passport.session());
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    User.findOne({ username: username }, function(err, user) {
+    db.getUser({ username: username }, function(err, user) {
       if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
+      if (!user.length) {
+        return done(null, { type: 'username', message: 'Incorrect username.' });
       }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
+      if (user[0].password !== password) {
+        return done(null, { type: 'password', message: 'Incorrect password.' });
       }
       return done(null, user);
     });
   }
 ));
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
 
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
 
-  // app.use(express.cookieParser());
-  // app.use(express.session({ secret: 'keyboard cat' }));
+app.post('/login',
+  passport.authenticate('local',), 
+  function(req, res) {
+    // If this function gets called, authentication was successful.
+    res.json(req.user)
+});
+/////////////////////////////////////
 
 //serve static pages
 app.use(express.static(__dirname + '/../client/dist'));
@@ -41,13 +54,6 @@ app.use('/:username', express.static(__dirname + '/../client/dist'));
 //handle /api endpoints
 app.use('/api', api);
 
-app.post('/login',
-  passport.authenticate('local'),
-  function(req, res) {
-    // If this function gets called, authentication was successful.
-    // `req.user` contains the authenticated user.
-    res.redirect('/api/' + req.user.username);
-});
 
 let port = process.env.PORT || 3000;
 

@@ -1,7 +1,7 @@
 {
   "name": "therebasebook",
   "version": "1.0.0",
-  "description": "Facebook clone",
+  "description": "The rebasebook",
   "main": "index.js",
   "scripts": {
     "react-dev": "webpack -d --watch",
@@ -9,7 +9,7 @@
     "start:debug": "nodemon --inspect server/index.js",
     "postinstall": "webpack --config ./webpack.config.js"
   },
-  "author": "Albert Chang",
+  "author": "Ace White",
   "license": "ISC",
   "devDependencies": {},
   "dependencies": {
@@ -27,6 +27,7 @@
     "lodash": "^4.17.4",
     "moment": "^2.20.1",
     "morgan": "^1.9.0",
+    "nodemon": "^1.14.11",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pg": "7.4.1",
