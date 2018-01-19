@@ -11,7 +11,6 @@ class ChatButton extends React.Component {
   }
   
   handleClick() {
-    console.log('button clicks');
     this.props.handleClick();
   }
   render() {
