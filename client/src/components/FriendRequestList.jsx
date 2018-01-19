@@ -12,6 +12,12 @@ class FriendRequestList extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    // Right before the component unmounts, clean up the completed friendships
+    // by refreshing the friendrequest list. 
+    this.props.refreshFriendRequests(this.props.userId);
+  }
+
   addFriend(friendId) {
     let data = {
       userId: this.props.userId,
