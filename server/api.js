@@ -1,10 +1,19 @@
 const route = require('express').Router();
 const db = require('../database-posgtres/index.js');
+const passport = require ('passport');
 
 
 const api = {
 
   user: {
+    // login: function(req, res) {
+
+
+    //   // If this function gets called, authentication was successful.
+    //   // `req.user` contains the authenticated user.
+    //   res.redirect('/profile/' + req.user.username);
+    // },
+
     getProfile: function (req, res) {
       db.searchSomeone(req.params.user, (err, data) => {
         if (err) {
@@ -37,7 +46,6 @@ const api = {
     },
 
     getLikers: function (req, res) {
-
       db.getLikers(req.query.text, (err, data) => {
         if (err) {
           res.status(404).send(err);
@@ -402,6 +410,7 @@ route.get('/friend_list', api.user.getAllFriends);
 route.get('/chats/:userId', api.chats.getChatSessions); //retrieve chat history of user
 route.get('/chat/:chatId', api.chat.getChatMessages); //retrieve messages from a chat session
 //USER
+// route.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),api.user.login); // varifies identity on login
 route.post('/friendship', api.user.addFriendship); // add a friendship between 2 users
 route.patch('/friendship', api.user.destroyFriendship); // destroy a friendship or a friendship request
 route.get('/friendship', api.user.getFriendship); // returns the status of an existing friendship between two users.

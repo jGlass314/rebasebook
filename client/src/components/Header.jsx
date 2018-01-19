@@ -45,7 +45,7 @@ class Header extends React.Component {
               </span>
               <Link
                 onClick={ () => this.props.updateLoginState(false) }
-                to='/login'>
+                to='/'>
                 <button className="btn">
                   <span className="headerFont">Log Out</span>
                 </button>

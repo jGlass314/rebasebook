@@ -173,3 +173,4 @@ INSERT INTO user_profiles (user_id, user_data) VALUES (3,
     messages_id INT REFERENCES MESSAGES(id),
     read BOOLEAN NOT NULL DEFAULT FALSE
   );
+

@@ -14,6 +14,8 @@ class SignIn extends React.Component {
       redirect: false,
       undefinedUsername: false,
       usernameError: false,
+      password: '',
+      undefinedPassword: false,
     };
   }
 
@@ -21,6 +23,12 @@ class SignIn extends React.Component {
     this.setState({
       username: e.target.value,
       usernameError: false
+    });
+  }
+
+  handlePasswordInput (e) { 
+    this.setState({
+      password: e.target.value,
     });
   }
   
@@ -35,21 +43,29 @@ class SignIn extends React.Component {
     e.preventDefault();
 
     // If the user has not entered a username, show error
-    if (!this.state.username) {
+    if (!this.state.username || !this.state.password) {
       this.setState({
-        undefinedUsername: true
+        undefinedUsername: Boolean(!this.state.username),
+        undefinedPassword: Boolean(!this.state.password)
       });
     } else {
       // otherwise attempt to log user in
-      this.logUserIn(this.state.username);
+      this.logUserIn();
     }  
   }
 
-  logUserIn(username) {
+  resetErrors() {
+    this.setState({
+      undefinedUsername: false,
+      undefinedPassword: false,
+    })
+  }
 
-    // Call login endpoint
+  logUserIn() {
+    var {username, password} = this.state;
+    this.resetErrors();
 
-    $.get(`/api/${username}`, (data) => {
+    $.post(`/login`, {username: username, password: password}, (data) => {
       // If user successfully logs in
       if (data.length) {
         let basicUserData = data[0];
@@ -67,11 +83,17 @@ class SignIn extends React.Component {
 
       } else {
         // Failed Login 
+        data.type === 'username' 
+        ?
         this.setState({
           showSignupForm: true,
+          usernameError: true,
           redirect: false,
-          usernameError: true
-        });
+        })
+        : 
+        this.setState({
+          undefinedPassword: true,
+        })
       }
     })
   }
@@ -93,8 +115,9 @@ class SignIn extends React.Component {
         </div>
         <div className="right-column">
           <h3 id="sign-in"> Sign In </h3>
-          <form>
+          <form action="/login" method="post">
             <Card className="signIn-card">
+
               <h5 className="signInLabel bottom aligned content">Username</h5>
               {this.state.undefinedUsername && 
                 <h5 className="undefined-user-error">
@@ -106,15 +129,32 @@ class SignIn extends React.Component {
                 type="text"
                 onChange={this.handleUsernameInput.bind(this)}
               />
-              <Link onClick={this.handleLogIn.bind(this)} to={feedPath}>
-                <Button className="login-button" id="login"> Log In </Button>
+
+              <h5 className="signInLabel bottom aligned content">Password</h5>
+              {this.state.undefinedPassword && 
+                <h5 className="undefined-user-error">
+                  <Icon name="warning circle"/>Invalid password.
+                </h5>
+              }
+              <Input 
+                className="username-input"
+                type="password"
+                onChange={this.handlePasswordInput.bind(this)}
+              />
+
+              <Link 
+                to={feedPath}
+                onClick={this.handleLogIn.bind(this)} 
+              >
+                <Button className="login-button" id="login" type="submit"> Log In </Button>
               </Link>
               <div id="create-account-text">Don't have an account yet?</div>
               <div>
                 <Button 
                   className="login-button"
                   id="create-new-account"
-                  onClick={this.showSignUpForm.bind(this)}>
+                  onClick={this.showSignUpForm.bind(this)}
+                >
                   Sign Up
                 </Button>
               </div>
