@@ -222,15 +222,3 @@ ChatWindow.MessageInput = ChatMessageInput;
 ChatWindow.Button = ChatButton;
 
 export default ChatWindow;
-
-/*          
-       
-        {this.renderOnlineUsers(this.state.onlineUsers)}
-
-*/
-
-/*
-<ChatHeader text={chatHeaderText} onClose={this.onClose} />
-  <ChatFriendSearch onSelect={this.onFriendSelect} />
-  <ChatFeed messages={this.state.messages} />
-        { chatMessageInput } */

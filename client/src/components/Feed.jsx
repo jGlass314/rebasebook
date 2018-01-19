@@ -10,8 +10,6 @@ import { Button, Icon, Image, Header, List, Item, Divider, Menu, Advertisement }
 class Feed extends React.Component {
   constructor(props) {
     super(props);
-    console.log('Feed Username ', this.props.username)
-    console.log('Feed Username2 ', props.username)
     this.state = {
       postList: [],
       username: this.props.username,
