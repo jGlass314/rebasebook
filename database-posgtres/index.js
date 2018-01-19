@@ -491,15 +491,12 @@ module.exports = {
         } else if (results === 'response pending') {
           let deleteInfo = {};
           // delete friend request from notifications_friendships
-          console.log('selecting id from users_friendships');
           return pg.select('id')
             .from('users_friendships')
             .where('user_id_from', userId)
             .andWhere('user_id_to', friendId)
           .then(friendshipsId => {
             deleteInfo.friendshipsId = friendshipsId[0].id;
-            console.log('got id', deleteInfo.friendshipsId,'from user_friendships');
-            console.log('getting notifications_id & seen from notifications_friendships');
             return pg.select('notifications_id', 'seen')
               .from('notifications_friendships')
               .innerJoin('notifications', 'notifications.id', 'notifications_friendships.notifications_id')
@@ -509,9 +506,7 @@ module.exports = {
             deleteInfo.notificationsId = notifications[0].notifications_id;
             deleteInfo.seen = notifications[0].seen;
             // only delete if not seen
-            console.log('got notifications_id',deleteInfo.notificationsId,'seen',deleteInfo.seen);
             if(!deleteInfo.seen) {
-              console.log('deleting from notifications_friendships friendships_id:', deleteInfo.friendshipsId);
               return pg('notifications_friendships')
                 .where('friendships_id', deleteInfo.friendshipsId)
                 .limit(1)
