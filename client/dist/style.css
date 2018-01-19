@@ -639,6 +639,7 @@ textarea {
   left: 100px;
   min-width: 30rem;
   max-width: 50rem;
+  z-index: 10;
 }
 
 .chatonlineusers {
