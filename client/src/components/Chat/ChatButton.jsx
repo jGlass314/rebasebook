@@ -6,7 +6,6 @@ class ChatButton extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log('Button Props ', props);
 
     this.handleClick = this.handleClick.bind(this);
   }

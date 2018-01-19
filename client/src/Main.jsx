@@ -38,7 +38,6 @@ class Main extends React.Component {
   getProfile(user) {
     axios.get(`/api/${user}`) 
     .then((res) => {
-      console.log('Res ',res);
       this.setState({
         view: 'profile',
         name: res.data[0].first_name + ' ' + res.data[0].last_name,
@@ -96,7 +95,6 @@ class Main extends React.Component {
   }
 
   render() {
-    console.log('params ', this.props);
     return (
       <main>
         <div>

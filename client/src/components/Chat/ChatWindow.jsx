@@ -9,6 +9,7 @@ import ChatHistory from './ChatHistory.jsx';
 import ChatOnlineUsers from './ChatOnlineUsers.jsx';
 import ChatButton from './ChatButton.jsx';
 import io from 'socket.io-client';
+import http from 'axios';
  
 
 const chatHistory = [
@@ -52,8 +53,6 @@ class ChatWindow extends React.Component {
       chatHistory: chatHistory
     }
 
-    console.log('Current User ', props.username);
-
     this.onClose = this.onClose.bind(this);
     this.onFriendSelect = this.onFriendSelect.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -62,11 +61,17 @@ class ChatWindow extends React.Component {
 
   componentDidMount() {
     this.connect();
-
+    this.getChatHistory();
   }
 
   getChatHistory() {
-    http.get('/chats')
+    http.get(`/api/chats/${this.props.userId}`)
+
+      .then((response) => {
+        this.setState({
+          chatHistory: response.data
+        })
+      })
   }
 
   connect() {
@@ -89,7 +94,6 @@ class ChatWindow extends React.Component {
       }
       
       let messages = this.state.messages;
-      console.log('Message Received ', message);
       messages.push(message.message);
       this.setState({
         messages: messages
@@ -142,7 +146,6 @@ class ChatWindow extends React.Component {
       this.connect();
     }
 
-    console.log('onFriendSelect called');
 
     this.setState({
       friend: friend
@@ -150,7 +153,6 @@ class ChatWindow extends React.Component {
   }
 
   sendMessage(message) {
-    console.log('Sending Message: ', message);
     this.state.socket.emit('message', {
       to: this.state.friend.username,
       message: message,

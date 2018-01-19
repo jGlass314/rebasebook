@@ -30,7 +30,6 @@ class ChatFriendSearch extends React.Component {
     //var user = this.state.username;
     http.get(`/api/search/users`)
       .then((response) => {
-        console.log(response);
         let searchNames = response.data.map(function (user) {
           return {
             "title": user.first_name + ' ' + user.last_name,
@@ -56,7 +55,6 @@ class ChatFriendSearch extends React.Component {
   };
 
   handleResultSelect(e, { result }) {
-    console.log('result select called', result);
     this.setState({ 
       value: result.description 
     });

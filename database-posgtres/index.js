@@ -27,6 +27,12 @@ let includesUserInFriendship = function(queryBuilder, userId) {
   });
 };
 
+let includesUserInChat = function(queryBuilder, userId) {
+  queryBuilder.where(function() {
+    this.where('chats.user_1', userId).orWhere('chats.user_2', userId)
+  });
+}
+
 module.exports = {
   getAllUsers: (callback) => {
     client.query('SELECT * FROM users;', (err, res) => {
@@ -539,5 +545,56 @@ module.exports = {
         .where({'user_id_from': userId})
         .where({'state': 'friend'});
     }
+  }, 
+
+  addUserChatSession: (user1, user2) => {
+    // var newChat = {
+    //   user_1: user1,
+    //   user_2: user2
+    // };
+
+    // return pg('chats')
+    //   .modify(includesUserInChat, user1)
+    //   .modify(includesUserInChat, user2)
+    //   .then((results) => {
+        
+    //     //check for existing user chat session
+    //     if (results.length) {
+    //       return results[0].id
+    //     }
+
+    //     return pg.transaction((trx) => {
+    //       return trx
+    //         .insert(newChat)
+    //         .into('chats')
+    //         .returning('id')   
+    //     });
+    // });
+  },
+  
+  addChatMessage: (chatSessionId, message) => {
+    // let newMessage = {
+    //   created_at: Date.now(),
+    //   chat_id: chatSessionId,
+    //   text: message.text,
+    //   authord_id: message.from
+    // }
+
+    // return pg.transaction((trx) => {
+    //   return trx
+    //     .insert(message)
+    //     .into('messages')
+    //     .returning('id')
+    // })
+  },
+
+  getUserChatSessions: (userId) => {
+    // return pg('chats')
+    //   .select('chats.id', 'users.id', 'users.picture_url', 'users.first_name', 'users.last_name', 'users.username')
+    //   .innerJoin('users', function() {
+    //     this.on('chats.user_1', '=', 'users.id').orOn('chats.user_2', '=', 'users.id')
+    //   })
+    //   .where({'user_1': userId})
+    //   .orWhere({'user_2': userId});
   }
 }

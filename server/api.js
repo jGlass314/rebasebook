@@ -312,6 +312,21 @@ const api = {
     },
   },
 
+  chats: {
+
+    getChatSessions: function (req, res) {
+      console.log('Get Chat Sessions ', req.params);
+      db.getUserChatSessions(req.params.userId, (err, data) => {
+        if (err) {
+          console.log(err.message);
+          res.status(400).send('Unable to retrieve users chat sessions');
+        } else {
+           res.status(200).end();
+        }
+      });
+    }
+  },
+
   posts: {
 
     getPosts: function (req, res) {
@@ -369,7 +384,7 @@ route.get('/likers', api.user.getLikers); // get all likers of a particular user
 route.post('/friendship', api.user.addFriendship); // CG: ginger's new friendship endpoint
 route.get('/friendship', api.user.getFriendship); // CG: This endpoint returns the status of an existing friendship request between two users.
 route.get('/friend_list', api.user.getAllFriends);
-
+route.get('/chats/:userId', api.chats.getChatSessions); //retrieve chat history of user
 //USER
 route.post('/friendship', api.user.addFriendship); // add a friendship between 2 users
 route.patch('/friendship', api.user.destroyFriendship); // destroy a friendship or a friendship request

@@ -19,7 +19,6 @@ class ChatMessageInput extends React.Component {
   }
 
   onChange(e, {value}) {
-    console.log('onChange ', value);
     this.setState({
       text: value
     });
