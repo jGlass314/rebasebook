@@ -219,21 +219,22 @@ module.exports = {
   },
   //add user to db
   addUser: (userData, callback) => {
-    client.query(`INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('${userData.username}', '${userData.firstName}', '${userData.lastName}', '${userData.pictureUrl}');`, (err, res) => {
+    client.query(`INSERT INTO users (username, password, first_name, last_name, picture_url) VALUES ('${userData.username}', '${userData.password}', '${userData.firstName}', '${userData.lastName}', '${userData.pictureUrl}');`, (err, res) => {
       if (err) {
+        console.error(err.error);
         callback(err.detail, null);
       } else {  
         callback(null, res.rows);
       }
     });
   },   
-  addNewUserProfileInfo: (username, callback) => {
+  addNewUserProfileInfo: (user, callback) => {
     var defaultProfile = {};
-    defaultProfile.profile_picture = '/images/profile_default.jpg'
+    defaultProfile.profile_picture = user.pictureUrl;
     defaultProfile = JSON.stringify(defaultProfile);
-    client.query(`INSERT INTO user_profiles (user_id, user_data) VALUES ((SELECT id FROM users WHERE username='${username}'), '${defaultProfile}')`, (err, res) => {
+    client.query(`INSERT INTO user_profiles (user_id, user_data) VALUES ((SELECT id FROM users WHERE username='${user.username}'), '${defaultProfile}')`, (err, res) => {
       if (err) {
-        console.log(err.message);
+        console.error(err.message);
         callback(err, null);
       } else {  
         callback(null, res.rows);

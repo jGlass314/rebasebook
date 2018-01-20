@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users (
     id SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR (25) NOT NULL UNIQUE,
+    password VARCHAR (25) NOT NULL,
     first_name VARCHAR (25),
     last_name VARCHAR (25),
     picture_url VARCHAR(255)
