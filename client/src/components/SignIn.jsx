@@ -124,6 +124,7 @@ class SignIn extends React.Component {
                 className="username-input"
                 name="username"
                 type="text"
+                autoComplete='username'
                 onChange={this.handleFormInput.bind(this)}
               />
 
@@ -137,6 +138,7 @@ class SignIn extends React.Component {
                 className="username-input"
                 name="password"
                 type="password"
+                autoComplete='current-password'
                 onChange={this.handleFormInput.bind(this)}
               />
 
