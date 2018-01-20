@@ -114,7 +114,7 @@ module.exports = {
 
     let queryStr =
     `SELECT user_id FROM user_posts_liked WHERE post_id = 
-    (SELECT id FROM posts WHERE post_text = '${text}')`;
+    (SELECT id FROM posts WHERE post_text = '${text}' LIMIT 1)`;
     client.query(queryStr, (err, res) => {
       if (err) {
         callback(err, null);

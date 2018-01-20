@@ -88,11 +88,9 @@ class Profile extends React.Component {
 
   getUserPosts(profileId) {
     let profileUserId = profileId || this.state.profileUserId;
-    console.log('GET USER POSTS now', profileUserId);
 
     axios.get(`/api/posts/${profileUserId}`)
       .then((results) => {
-        console.log('should be newhere', results);
         this.setState({
           authorPosts: results.data
         });
@@ -222,6 +220,7 @@ class Profile extends React.Component {
         <Profile_photos 
           view={this.state.view} />
         <Profile_postSection 
+          loggedInUserId={this.state.loggedInUserId}
           getUserPosts={this.getUserPosts.bind(this)} 
           username={this.state.profilePageUsername} 
           posts={this.state.authorPosts}

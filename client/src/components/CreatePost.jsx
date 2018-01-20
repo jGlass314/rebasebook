@@ -99,17 +99,23 @@ class CreatePost extends React.Component {
               
               <Dropzone 
                 className='post-imageSelect'
+                multiple={false}
                 acceptClassName='post-imageSelect post-imageSelect-accepted'
-                accept='image/*'
+                accept='image/jpeg'
                 onDrop={this.onDrop.bind(this)}>
-                <p>Drop an image, or click to upload</p>
+                <p>Drop a .jpg image, or click to upload</p>
                 <Icon name='photo'/>
               </Dropzone>
               {this.state.accepted[0] &&  
-                <div>
+                <div className='post-imageSelect-aside'>
                   <strong>Image attached! </strong>
                   <span>{this.state.accepted[0].name} </span>
               </div>}
+              {this.state.rejected[0] && 
+                <div className='post-imageSelect-aside'>
+                  <strong>Please upload an image with a jpg file-type!</strong>
+                </div>
+              }
             </div>
 
             <div className="createPostButtonRow">

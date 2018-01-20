@@ -551,6 +551,10 @@ textarea {
   padding-left: 15px;
   flex-wrap: wrap;
 }
+
+.post-imageSelect-aside {
+  flex-basis: 100%;
+}
 .post-imageSelect {
   text-align: center;
   width: 150px;
@@ -559,6 +563,10 @@ textarea {
   border-color: rgb(102, 102, 102);
   border-style: dashed;
   border-radius: 5px;
+}
+
+.post-imageSelect-accepted {
+  background-color: green;
 }
 
 .post-image {
