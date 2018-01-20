@@ -259,7 +259,7 @@ module.exports = {
       }
     });
   },
-<<<<<<< HEAD
+
   //add 2 rows to user_friends table
   addFriend: (username1, username2, callback) => {
     let queryStr = `INSERT INTO user_friends (username, friend_id)
@@ -334,8 +334,7 @@ module.exports = {
       }  
     });
   },
-=======
->>>>>>> upload images working
+
   getProfilePageInfo: (username, callback) => {
     var query = `SELECT * from user_profiles WHERE user_id = (SELECT id FROM users WHERE username = '${username}')`;
     client.query(query, (err, res) => {

@@ -512,8 +512,9 @@ const api = {
 
 
 //IMAGE HANDLINE
-route.post('/uploadImage', grabImage.single('sharedImage'), api.image.addImage); // uploads image to CDN and returns URL
+route.post('/uploadImagePost', grabImage.single('sharedImage'), api.image.addImage); // uploads image to CDN and returns URL
 route.patch('/deleteImage', api.image.deleteImage); // deletes image at a particular CDN url
+route.post('/createPost', api.post);
 
 //POSTS
 route.get('/posts/:authorId', api.posts.getPostsByAuthorId); // CG - gets posts by authorID
