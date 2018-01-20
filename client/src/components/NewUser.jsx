@@ -7,9 +7,6 @@ class NewUser extends React.Component {
   constructor(props) {
     super(props);
 
-    // Username input field for Sign up is
-    // seeded from login field.
-
     this.state = {
       username: '',
       password: '',

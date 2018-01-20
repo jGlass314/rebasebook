@@ -220,9 +220,8 @@ module.exports = {
   //add user to db
   addUser: (userData, callback) => {
     client.query(`INSERT INTO users (username, password, first_name, last_name, picture_url) VALUES ('${userData.username}', '${userData.password}', '${userData.firstName}', '${userData.lastName}', '${userData.pictureUrl}');`, (err, res) => {
-      console.log("INSERT NEW USER: ", err, res)
       if (err) {
-        console.error(err)
+        console.error(err.error);
         callback(err.detail, null);
       } else {  
         callback(null, res.rows);
