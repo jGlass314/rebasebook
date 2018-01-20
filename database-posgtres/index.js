@@ -648,7 +648,7 @@ module.exports = {
 
   getPostByAuthorId: (authorId) => {
     return pg('posts')
-      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_image_url', 'post_timestamp')
       .where({'user_id': authorId})
       .innerJoin('users', 'posts.user_id', 'users.id')
       .orderBy('post_id', 'desc');
@@ -656,14 +656,14 @@ module.exports = {
 
   getAllPosts: () => {
     return pg('posts')
-      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_image_url', 'post_timestamp')
       .innerJoin('users', 'posts.user_id', 'users.id')
       .orderBy('post_id', 'desc');
   },
 
   getPostsFromFriends: (userId) => {
     return pg('posts')
-      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_timestamp')
+      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_image_url', 'post_timestamp')
       .whereIn('user_id', function() {
         this.select('users.id')
           .from('users_friendships')

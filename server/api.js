@@ -45,26 +45,9 @@ let uploadImage = function(image) {
 const api = {
 
   image: {
-    addImage: function(req, res) {
-      if (!req.file || !req.file.fieldname === 'sharedImage') {
-        return res.status(403).send('expect 1 file upload');
-      }
-
-      uploadImage(req.file)
-        .then((url) => {
-          console.log('should error url here', url);
-          res.sendStatus(200);
-        })
-        .catch((err) => {
-          console.error('error uploading to S3', err);
-          res.sendStatus(500).json('unexpected server errror');
-        })
-     
-    },
-
-    deleteImage: (req, res) => {
-
-    }
+    // deleteImage: (req, res) => {
+    //   console.log('hope');
+    // }
   },
 
   user: {
@@ -338,6 +321,47 @@ const api = {
       })
     },
 
+    createPostNonImage: function(req, res) {
+      let userId = parseInt(req.body.authorId);
+      let postText = req.body.postText;
+
+
+      if (!userId) {
+        res.status(400).json('bad request');
+      } else {
+        db.createPostG(userId, postText)
+          .then((post_id) => {
+            res.status(200).json({"post_id": post_id})
+          })
+          .catch((err) => {
+            console.error('addfriendship err:', err);
+            res.status(500).json('unexpected server errror');
+          });
+      }
+    },
+
+    createPostImage: function(req, res) {
+      let userId = parseInt(req.body.authorId);
+      let postText = req.body.postText || null;
+
+      if (!userId || !req.file || !req.file.fieldname === 'sharedImage') {
+        res.status(400).json('bad request');
+      } else {
+        uploadImage(req.file)
+          .then((url) => {
+            db.createPostG(userId, postText, url)
+              .then((post_id) => {
+                res.status(200).json({"post_id": post_id})
+              })
+            
+          })
+          .catch((err) => {
+            console.error('error uploading to S3', err);
+            res.sendStatus(500).json('unexpected server errror');
+          })    
+      }
+    },
+
     getAuthor: function(req, res) {
       db.getPostAuthor(req.query.text, (err, data) => {
         if (err) {
@@ -512,9 +536,9 @@ const api = {
 
 
 //IMAGE HANDLINE
-route.post('/uploadImagePost', grabImage.single('sharedImage'), api.image.addImage); // uploads image to CDN and returns URL
-route.patch('/deleteImage', api.image.deleteImage); // deletes image at a particular CDN url
-route.post('/createPost', api.post);
+route.post('/uploadImagePost', grabImage.single('sharedImage'), api.post.createPostImage); // uploads image to CDN and returns URL
+route.post('/createPost', api.post.createPostNonImage);
+// route.patch('/deleteImage', api.image.deleteImage); // deletes image at a particular CDN url
 
 //POSTS
 route.get('/posts/:authorId', api.posts.getPostsByAuthorId); // CG - gets posts by authorID

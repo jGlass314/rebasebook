@@ -119,6 +119,13 @@ class Post extends React.Component {
             </div>
             <hr className="postHorizontal" />
             <p className="postText">{this.props.post.post_text}</p>
+            
+            {this.props.post.post_image_url && 
+              <div>
+                <img className="post-image" src={this.props.post.post_image_url} />
+              </div>
+            }
+
             <div className="postButtonRow">
               <Button onMouseOver={this.getLikers.bind(this)} data-multiline='true' data-tip={this.state.likers}className="likeButton" onClick={this.toggleLike.bind(this)} as='div' labelPosition='right'>
                 <Button className="likeHeartButton">
