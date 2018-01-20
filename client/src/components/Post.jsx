@@ -108,7 +108,7 @@ class Post extends React.Component {
                     <span 
                       className="nameLink">
                       <strong>
-                      {this.props.post.first_name}&nbsp;{this.props.post.last_name}
+                        {this.props.post.first_name}&nbsp;{this.props.post.last_name}
                       </strong>
                     </span>
                   </Link>

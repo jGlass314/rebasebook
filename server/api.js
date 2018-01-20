@@ -26,7 +26,7 @@ let uploadImage = function(image) {
   let timestamp = moment().format();
   let hash = md5(originalFileName + timestamp).substring(0, 10);
   let fileNameWithHash = hash + '-' + originalFileName;
-  console.log('made it here')
+
   let params = {
     Bucket: 'rebasebook/images',
     ContentType: image.mimetype,
@@ -204,7 +204,7 @@ const api = {
         })
         .catch((err) => {
           console.error('addfriendship err:', err);
-          res.status(500).json('unexpected server errror');
+          res.status(500).json('unexpected server error');
         });
     },
 
@@ -225,7 +225,7 @@ const api = {
         })
         .catch((err) => {
           console.error(err);
-          res.status(500).json('unexpected server errror');
+          res.status(500).json('unexpected server error');
         });
 
     },
@@ -252,14 +252,14 @@ const api = {
 
             if (friendshipStatus === undefined) {
               // This should not occur. Send server error and capture edge cases.
-              res.status(500).json('unexpected server errror');
+              res.status(500).json('unexpected server error');
             } else {
               res.status(200).json({'friendship_status': friendshipStatus});
             }
           })
           .catch((err) => {
             console.error(err);
-            res.status(500).json('unexpected server errror');
+            res.status(500).json('unexpected server error');
           }); 
       }
     },
@@ -282,7 +282,7 @@ const api = {
           })
           .catch((err) => {
             console.error(err);
-            res.status(500).json('unexpected server errror');
+            res.status(500).json('unexpected server error');
           });  
       }
 
@@ -323,13 +323,13 @@ const api = {
       if (!userId) {
         res.status(400).json('bad request');
       } else {
-        db.createPostG(userId, postText)
+        db.createPostById(userId, postText)
           .then((post_id) => {
             res.status(200).json({"post_id": post_id})
           })
           .catch((err) => {
             console.error('addfriendship err:', err);
-            res.status(500).json('unexpected server errror');
+            res.status(500).json('unexpected server error');
           });
       }
     },
@@ -343,7 +343,7 @@ const api = {
       } else {
         uploadImage(req.file)
           .then((url) => {
-            db.createPostG(userId, postText, url)
+            db.createPostById(userId, postText, url)
               .then((post_id) => {
                 res.status(200).json({"post_id": post_id})
               })
@@ -351,7 +351,7 @@ const api = {
           })
           .catch((err) => {
             console.error('error uploading to S3', err);
-            res.sendStatus(500).json('unexpected server errror');
+            res.sendStatus(500).json('unexpected server error');
           })    
       }
     },
@@ -444,7 +444,7 @@ const api = {
           })
           .catch((err) => {
             console.error(err);
-            res.status(500).json('unexpected server errror');
+            res.status(500).json('unexpected server error');
           })    
       }
 
@@ -512,7 +512,7 @@ const api = {
           })
           .catch((err) => {
             console.error(err);
-            res.status(500).json('unexpected server errror');
+            res.status(500).json('unexpected server error');
           })    
       } else {
         db.getAllPosts()
@@ -521,7 +521,7 @@ const api = {
           })
           .catch((err) => {
             console.error(err);
-            res.status(500).json('unexpected server errror');
+            res.status(500).json('unexpected server error');
           }) 
       }
     }

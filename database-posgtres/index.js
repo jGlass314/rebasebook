@@ -631,7 +631,7 @@ module.exports = {
       .limit(50);
   },
 
-  createPostG: (userId, text, imageUrl) => {
+  createPostById: (userId, text, imageUrl) => {
     let newPostToAdd = {
       user_id: userId,
       post_text: text

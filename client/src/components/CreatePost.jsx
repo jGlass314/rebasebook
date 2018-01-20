@@ -28,7 +28,7 @@ class CreatePost extends React.Component {
   }
 
   createPostNew() {
-    let postInput = this.state.postText;
+    let postInput = this.state.postText || ' ';
     let authorId = this.props.userId;
     let hasImage = Boolean(this.state.accepted[0]);
 
