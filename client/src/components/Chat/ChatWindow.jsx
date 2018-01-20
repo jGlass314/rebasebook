@@ -9,6 +9,7 @@ import ChatHistory from './ChatHistory.jsx';
 import ChatOnlineUsers from './ChatOnlineUsers.jsx';
 import io from 'socket.io-client';
 import http from 'axios';
+import _ from 'underscore';
  
 
 class ChatWindow extends React.Component {
@@ -22,12 +23,16 @@ class ChatWindow extends React.Component {
       user: props.username,
       displayChat: false,
       onlineUsers: [],
-      chatHistory: []
+      chatHistory: [],
+      displayOnlineUsers: false,
+      onlineUsers: []
     }
 
     this.onClose = this.onClose.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.openChat = this.openChat.bind(this);
+    this.onCloseOnlineUsers = this.onCloseOnlineUsers.bind(this);
+    this.openOnlineUsers = this.openOnlineUsers.bind(this);
   }
 
   componentDidMount() {
@@ -73,10 +78,29 @@ class ChatWindow extends React.Component {
       
     });
 
-    socket.on('onlineusrs', (data) => {
-      this.setState({
-        onlineUsers: data
+    socket.on('onlineusers', (data) => {
+
+      // remove self from online users
+
+      let currentId = this.props.userId;
+      data = _.filter(data, (userId) => {
+        return userId !== `${currentId}`;
       });
+
+      Promise.all(data.map(userId => (
+        http.get(`/api/user/${userId}`)
+      )))
+        .then((responses) => {
+          let users = responses.map(response => (
+            response.data[0]
+          ));
+          this.setState({
+            onlineUsers: users
+          });
+        })
+        .catch((err) => {
+          console.log(err.message);
+        })
     });
 
     socket.on('disconnect', (reason) => {
@@ -98,6 +122,18 @@ class ChatWindow extends React.Component {
       friend: null,
       messages: [],
       displayChat: false
+    });
+  }
+
+  onCloseOnlineUsers() {
+    this.setState({
+      displayOnlineUsers: false
+    });
+  }
+
+  openOnlineUsers() {
+    this.setState({
+      displayOnlineUsers: true
     });
   }
 
@@ -155,8 +191,8 @@ class ChatWindow extends React.Component {
     });
   }
 
-  renderOnlineUsers(users) {
-    return <ChatOnlineUsers users={users} />
+  renderOnlineUsers(active) {
+    return active && <ChatOnlineUsers users={this.state.onlineUsers} onSelectChat={this.openChat} onClose={this.onCloseOnlineUsers} />
   }
 
   renderChatWindow(active) {
@@ -194,11 +230,16 @@ class ChatWindow extends React.Component {
         <div className='chatbutton' >
           <Popup
             trigger={<Button icon='comments'/>}
-            content={<ChatHistory newMessage={this.openChat} chats={this.state.chatHistory} onSelectChat={this.openChat}/>}
+            content={<ChatHistory 
+              newMessage={this.openChat} 
+              chats={this.state.chatHistory} 
+              onOnlineUsers={this.openOnlineUsers} 
+              onSelectChat={this.openChat}/>}
             on='click'
           />          
         </div>
         {this.renderChatWindow(this.state.displayChat)}
+        {this.renderOnlineUsers(this.state.displayOnlineUsers)}
       </div>
     )
   }

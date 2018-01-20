@@ -1,5 +1,6 @@
 
 const db = require('../database-posgtres');
+const _ = require('underscore');
 
 const connections = {};
 const users = {};
@@ -17,7 +18,7 @@ let init = function(io) {
         connected: true
       };
 
-      socket.emit('onlineusers', getOnlineUsers());
+      chat.emit('onlineusers', getOnlineUsers());
 
     });
 

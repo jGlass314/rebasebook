@@ -55,7 +55,8 @@ class ChatHistory extends React.Component {
           ))}
         </List>
         <Divider horizontal />
-        <a onClick={this.onNewMessage}>New Message</a>
+        <div><a onClick={this.onNewMessage}>New Message</a></div>
+        <div><a onClick={this.props.onOnlineUsers}>Show Online Users</a></div>
       </div>
     );
   }
