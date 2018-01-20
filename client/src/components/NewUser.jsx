@@ -86,12 +86,14 @@ class NewUser extends React.Component {
               className="newUserInput" 
               name="username" 
               type="text" 
+              autoComplete='username'
               onChange={this.handleInputChange.bind(this)} 
               placeholder="Username"/>
             <Input 
               className="newUserInput" 
               name="password" 
               type="password" 
+              autoComplete='new-password'
               onChange={this.handleInputChange.bind(this)} 
               placeholder="Password"/>
             <Input 

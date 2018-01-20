@@ -642,7 +642,10 @@ textarea {
 
 .chatFriendSearch {
   background-color: rgb(224, 225, 226);
-  vertical-align: 'middle'
+  vertical-align: 'middle';
+  margin-left: -14px;
+  margin-right: -14px;
+  text-align: center;
 }
 
 .chatinput {
@@ -679,7 +682,7 @@ textarea {
   max-height: 30rem;
   margin-left: -10px;
   margin-right: -10px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .chatcontainer {
@@ -689,6 +692,7 @@ textarea {
   padding-left: 0;
   padding-right: 0;
   max-width: 30rem;
+  min-width: 20rem;
   z-index: 10;
 }
 

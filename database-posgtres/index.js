@@ -661,7 +661,6 @@ module.exports = {
       if (err) {
         callback(err, null);
       } else {
-        console.log('res', res);
         callback(null, res.rows);
       }
     });
@@ -698,6 +697,7 @@ module.exports = {
           .select('messages.id', 'messages.author_id as authorId', 'users.first_name as firstName', 'users.last_name as lastName', 'users.picture_url as pictureUrl', 'messages.created_at as createdAt', 'messages.text')
           .innerJoin('users', 'messages.author_id', 'users.id')
           .where({ 'messages.chat_id': chatId })
+          .orderBy('messages.created_at', 'asc')
           .then((result) => {
             callback(null, result);
           })

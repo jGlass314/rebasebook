@@ -108,6 +108,7 @@ class ChatFriendSearch extends React.Component {
           onSearchChange={this.handleSearchChange}
           results={results}
           value={value}
+          placeholder='Type friends name...'
         />
       </div>
     )

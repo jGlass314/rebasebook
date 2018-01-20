@@ -59,8 +59,13 @@ class ChatWindow extends React.Component {
         this.openChat({id: message.from});
 
       } else {
+        
         let messages = this.state.messages;
-        messages.push(message.message);
+        messages.push({
+          authordId: this.state.friend.id,
+          text: message.message,
+          pictureUrl: this.state.friend.pictureUrl
+        });
         this.setState({
           messages: messages
         })

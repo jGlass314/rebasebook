@@ -23,13 +23,14 @@ let init = function(io) {
 
     socket.on('message', (data) => {
 
-      if (connections[data.to]) {
-        let s = connections[data.to].socket;
-        s.emit('message', data);
-      }
-
-
       db.addChatMessage(data.from, data.to, data.message)
+
+        .then(() => {
+          if (connections[data.to]) {
+            let s = connections[data.to].socket;
+            s.emit('message', data);
+          }
+        })
 
         .catch(err => console.log(err.message));
 
