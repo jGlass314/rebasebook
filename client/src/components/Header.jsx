@@ -33,38 +33,41 @@ class Header extends React.Component {
                 loggedInUser={this.props.name}/>
             </div>
             <div className="navbar-menuItemsContainer">
-              <ChatWindow 
-                className='navbar-menuItems navbar-menuItems--icon' 
-                userId={this.props.userId}
-                username={this.props.name} />
+              <div className='navbar-menuItems navbar-menuItems--icon'>
+                <ChatWindow 
+                  userId={this.props.userId}
+                  username={this.props.name} />
+              </div>
               <div className='navbar-menuItems navbar-menuItems--icon'>
                 <Popup 
                   trigger={<Button icon='users'/>}
                   content={<FriendRequestList 
                     userId={this.props.userId} 
                     friendRequests={this.props.friendRequests}
-                    refreshFriendRequests={this.props.refreshFriendRequests}
-                  />}
+                    refreshFriendRequests={this.props.refreshFriendRequests}/>}
                   on='click'
                   position='bottom center'
                 />
               </div>
-              <Link 
-                className='navbar-menuItems navbar-menuItems--text'
-                to={feedPath}>
-                Feed
-              </Link>
-              <Link 
-                className='navbar-menuItems navbar-menuItems--text'
-                to={profilePath}>
-                Profile
-              </Link>
-              <Link
-                className='navbar-menuItems navbar-menuItems--text'
-                onClick={ () => this.props.updateLoginState(false) }
-                to='/'>
-                Log Out
-              </Link>
+              <div className='navbar-menuItems navbar-menuItems--text'>
+                <Link
+                  to={feedPath}>
+                  Feed
+                </Link>
+              </div>
+              <div className='navbar-menuItems navbar-menuItems--text'>
+                <Link
+                  to={profilePath}>
+                  Profile
+                </Link>
+              </div>
+              <div className='navbar-menuItems navbar-menuItems--text'>
+                <Link
+                  onClick={ () => this.props.updateLoginState(false) }
+                  to='/'>
+                  Log Out
+                </Link>
+              </div>
 
             </div>
           </div>

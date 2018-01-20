@@ -7,6 +7,7 @@ body {
 /* Structure */ 
 
 .navbar, .navbar--loggedIn {
+  /* aesthetics */
   background-color: #3F5FA4;
   font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
   font-size: 15px;
@@ -15,40 +16,39 @@ body {
   height: 50px;
   margin-bottom: 20px;
 
+  /* flex qualities */ 
   display: flex;
-  flex-direction: row; /* DEFAULT, do not need. Other options are column, row-reverse, column-reverse */
-  flex-wrap: nowrap; /* DEFAULT, do not need. Other options are wrap, wrap-reverse */
+  align-items: center; 
+  /* defaults of flex nowrap and flex row are great, no other changes needed!*/
 }
 
 .navbar-searchLogoContainer {
-  /* searchContainer is a child of a flex parent (navbar-loggedIN). 
-  This controls the child-behavior */
+  /* searchContainer is a child of the flex parent .navbar-loggedin 
+  This controls its child-behavior */
 
   flex-basis: 65%;
   padding-left: 13%; /* chose this percentage to match the main content sidebar */
 
-  /* searchContainer is also a parent of flex-children.
-  here are the parent settings */
-
+  /* searchLogoContainer is also a FLEX PARENT.
+  Here are the parent settings */
   display: flex;
-  flex-direction: row;  /* DEFAULT, do not need. */
-  flex-wrap: nowrap; /* DEFAULT, do not need. */
   align-items: center;
+
+  /* defaults of flex nowrap and flex row are great, no other changes needed!*/
 }
 
 .navbar-menuItemsContainer {
     /* searchContainer is a child of a flex parent (navbar-loggedIN). 
   This controls the child-behavior */
   flex-basis: 35%;
-  
 
   /* searchContainer is also a parent of flex-children.
   here are the settings for my parent container */
   display: flex; 
   justify-content: flex-start; /* horizontal, places at left of container */ 
   align-items: center; /* vertical alignment within container */
-  flex-direction: row;  /* DEFAULT, do not need. */
-  flex-wrap: nowrap; /* DEFAULT, do not need. */
+
+  /* defaults of flex nowrap and flex row are great, no other changes needed!*/
 
 }
 
@@ -64,14 +64,14 @@ body {
   padding: 10px;
 }
 
-.navbar-menuItems--text {
+.navbar-menuItems--text a {
   color: white;
   background: transparent;
   border-style: none;
   cursor: pointer;
 }
 
-.navbar-menuItems--text:hover {
+.navbar-menuItems--text a:hover {
   background-color: #365899;
   color: white;
 }

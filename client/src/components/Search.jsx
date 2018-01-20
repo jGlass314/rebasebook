@@ -80,7 +80,7 @@ class SearchBar extends Component {
       return (
       <div className="search-input">
         <Search
-          size='medium'
+          size='large'
           loading={isLoading}
           onResultSelect={this.handleResultSelect.bind(this)}
           onSearchChange={this.handleSearchChange.bind(this)}
@@ -97,7 +97,7 @@ class SearchBar extends Component {
     return (
       <div>
           <Search
-            size='medium'
+            size='large'
             loading={isLoading}
             onResultSelect={this.handleResultSelect.bind(this)}
             onSearchChange={this.handleSearchChange.bind(this)}
