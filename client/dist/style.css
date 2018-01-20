@@ -12,7 +12,7 @@ body {
   font-size: 15px;
 
   /* structure */
-  height: 65px;
+  height: 50px;
   margin-bottom: 20px;
 
   display: flex;
@@ -33,7 +33,6 @@ body {
   flex-direction: row;  /* DEFAULT, do not need. */
   flex-wrap: nowrap; /* DEFAULT, do not need. */
   align-items: center;
-
 }
 
 .navbar-menuItemsContainer {
@@ -43,9 +42,9 @@ body {
   
 
   /* searchContainer is also a parent of flex-children.
-  here are the parent settings */
+  here are the settings for my parent container */
   display: flex; 
-  justify-content: space-between; 
+  justify-content: flex-start; /* horizontal, places at left of container */ 
   align-items: center; /* vertical alignment within container */
   flex-direction: row;  /* DEFAULT, do not need. */
   flex-wrap: nowrap; /* DEFAULT, do not need. */
@@ -54,20 +53,17 @@ body {
 
 /* Styling for individual items */ 
 
-.navbar-menuItems {
-
-
-}
-
 .navbar-logo {
   height: 30px;
   width: 30px;  
   border-radius: 1px;
 }
 
+.navbar-menuItems {
+  padding: 10px;
+}
+
 .navbar-menuItems--text {
-  width: 70px;
-  height: 35px;
   color: white;
   background: transparent;
   border-style: none;
@@ -83,7 +79,17 @@ body {
 
 }
 
+/* search input */
 
+.search-input {
+  padding-left: 15px;
+  font-size: 15px;
+}
+
+/* override semantic bs */
+.search-input > .ui.icon.input input {
+  padding: 4px 0;
+}
 
 
 /******************************************** Search / Header Component ******************************************************/
@@ -104,7 +110,7 @@ body {
 .ui.grid {
   width: 630px !important;
   margin-right: 0px !important;
-}*/
+}
 
 .search-input {
   width: 220px !important;
@@ -119,7 +125,7 @@ body {
 }
 .search-btn {
   height: 30px;
-  /* width: 45px; */
+
   border: none;
   margin: 8px 0 7px 0;
   background-color: #f6f7f9;
@@ -131,11 +137,7 @@ body {
   float: left;
 }
 
-.friend-requests {
-  float: right;
-  margin-top: 20px;
-}
-
+*/
 
 .header-btn {
   margin-right: 140px;

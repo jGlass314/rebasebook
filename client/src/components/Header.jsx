@@ -18,25 +18,28 @@ class Header extends React.Component {
 
     const hasFriendRequests = false;
 
-    let icon = hasFriendRequests
-      ? <Icon color='yellow' name='users' />
-      : <Icon disabled name='users' />
-
     return (
       <span>
         {!this.props.signedIn 
         ? <div className="navbar"></div>
         : <div className='navbar navbar--loggedIn'>
             <div className='navbar-searchLogoContainer'>
-              <Image className="navbar-logo" src="/images/rbooktransparent.png"></Image>
+              
+              <img className="navbar-logo" src="/images/rbooktransparent.png"></img>
+             
               <SearchBar 
+                size='large'
                 className="navbar-searchBar"
                 loggedInUser={this.props.name}/>
             </div>
             <div className="navbar-menuItemsContainer">
-              <div className='navbar-menuItems navbar-menuItems--icon friend-requests'>
+              <ChatWindow 
+                className='navbar-menuItems navbar-menuItems--icon' 
+                userId={this.props.userId}
+                username={this.props.name} />
+              <div className='navbar-menuItems navbar-menuItems--icon'>
                 <Popup 
-                  trigger={icon}
+                  trigger={<Button icon='users'/>}
                   content={<FriendRequestList 
                     userId={this.props.userId} 
                     friendRequests={this.props.friendRequests}
@@ -46,25 +49,23 @@ class Header extends React.Component {
                   position='bottom center'
                 />
               </div>
-              <Link
+              <Link 
                 className='navbar-menuItems navbar-menuItems--text'
-                onClick={ () => this.props.updateLoginState(false) }
-                to='/'>
-                Log Out
+                to={feedPath}>
+                Feed
               </Link>
               <Link 
                 className='navbar-menuItems navbar-menuItems--text'
                 to={profilePath}>
                 Profile
               </Link>
-              <Link 
+              <Link
                 className='navbar-menuItems navbar-menuItems--text'
-                to={feedPath}>
-                Feed
+                onClick={ () => this.props.updateLoginState(false) }
+                to='/'>
+                Log Out
               </Link>
-              <ChatWindow 
-                className='navbar-menuItems navbar-menuItems--icon' 
-                userId={this.props.userId} username={this.props.name} />
+
             </div>
           </div>
         }
