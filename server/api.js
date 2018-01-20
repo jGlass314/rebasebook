@@ -44,12 +44,6 @@ let uploadImage = function(image) {
 
 const api = {
 
-  image: {
-    // deleteImage: (req, res) => {
-    //   console.log('hope');
-    // }
-  },
-
   user: {
     // login: function(req, res) {
 
@@ -535,12 +529,9 @@ const api = {
 };
 
 
-//IMAGE HANDLINE
+// POSTS NEW
 route.post('/uploadImagePost', grabImage.single('sharedImage'), api.post.createPostImage); // uploads image to CDN and returns URL
 route.post('/createPost', api.post.createPostNonImage);
-// route.patch('/deleteImage', api.image.deleteImage); // deletes image at a particular CDN url
-
-//POSTS
 route.get('/posts/:authorId', api.posts.getPostsByAuthorId); // CG - gets posts by authorID
 route.get('/myFeed', api.posts.getFeed); // CG - gets the ideal logged in feed for a user 
 
@@ -558,8 +549,8 @@ route.get('/friend_list', api.user.getAllFriends);
 //CHATS
 route.get('/chats/:userId', api.chats.getChatSessions); //retrieve chat history of user
 route.get('/chat/:chatId', api.chat.getChatMessages); //retrieve messages from a chat session
-//USER
 
+//USER
 // route.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),api.user.login); // varifies identity on login
 route.post('/friendship', api.user.addFriendship); // add a friendship between 2 users
 route.patch('/friendship', api.user.destroyFriendship); // destroy a friendship or a friendship request
