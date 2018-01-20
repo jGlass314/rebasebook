@@ -328,7 +328,7 @@ const api = {
             res.status(200).json({"post_id": post_id})
           })
           .catch((err) => {
-            console.error('addfriendship err:', err);
+            console.error('error creating post', err);
             res.status(500).json('unexpected server error');
           });
       }
@@ -343,14 +343,14 @@ const api = {
       } else {
         uploadImage(req.file)
           .then((url) => {
-            db.createPostById(userId, postText, url)
+            return db.createPostById(userId, postText, url)
               .then((post_id) => {
                 res.status(200).json({"post_id": post_id})
               })
             
           })
           .catch((err) => {
-            console.error('error uploading to S3', err);
+            console.error('error creating image post', err);
             res.sendStatus(500).json('unexpected server error');
           })    
       }
