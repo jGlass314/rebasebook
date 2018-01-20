@@ -112,6 +112,7 @@ class Feed extends React.Component {
 
         <div className="feedContent">
           <PostList 
+            userId={this.state.userId}
             postList={this.state.postList} 
             getAllPosts={this.getAllPosts.bind(this)} 
             name={this.state.username} />

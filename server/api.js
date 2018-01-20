@@ -41,8 +41,6 @@ let uploadImage = function(image) {
 }
 
 // ---- 
->>>>>>> upload images working
-
 
 const api = {
 
@@ -513,17 +511,13 @@ const api = {
 };
 
 
-<<<<<<< HEAD
-=======
 //IMAGE HANDLINE
 route.post('/uploadImage', grabImage.single('sharedImage'), api.image.addImage); // uploads image to CDN and returns URL
 route.patch('/deleteImage', api.image.deleteImage); // deletes image at a particular CDN url
 
->>>>>>> upload images working
 //POSTS
 route.get('/posts/:authorId', api.posts.getPostsByAuthorId); // CG - gets posts by authorID
 route.get('/myFeed', api.posts.getFeed); // CG - gets the ideal logged in feed for a user 
-
 
 //USERS
 route.get('/search/users', api.users.getUsers); //get all users

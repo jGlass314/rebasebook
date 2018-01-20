@@ -11,7 +11,7 @@ CREATE TABLE users (
     password VARCHAR (25) NOT NULL,
     first_name VARCHAR (25),
     last_name VARCHAR (25),
-    picture_url VARCHAR(255)
+    picture_url VARCHAR (255)
 );
 
 INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('mattupham', 'Matt', 'Upham', 'https://data.whicdn.com/images/14922648/large.jpg');
@@ -25,6 +25,7 @@ CREATE TABLE posts (
     id SERIAL PRIMARY KEY NOT NULL,
     user_id INTEGER REFERENCES users(id) NOT NULL,
     post_text VARCHAR (1000) NOT NULL,
+    post_image_url VARCHAR (255),
     post_timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

@@ -13,50 +13,64 @@ class CreatePost extends React.Component {
     }
   }
 
+  handlePostInput(event) {
+    const value = event.target.value;
+
+    this.setState({
+      postText: value
+    });
+  }
+
   onDrop(accepted, rejected) {
-    console.log(accepted, rejected);
     this.setState(
       { accepted, rejected }
     ); 
   }
 
-  createImagePost() {
-    var image = new FormData();
-    image.append('sharedImage', this.state.accepted[0]);
-    image.append('hello', 'hello');
+  createPostNew() {
+    let postInput = this.state.postText;
+    let authorId = this.props.userId;
+    let hasImage = Boolean(this.state.accepted[0]);
 
-    let imageName = this.state.accepted[0].name;
-    let contentType =  this.state.accepted[0].type;
-    console.log('image name', imageName);
-    console.log('content type name', contentType);
+    let options = null;
+    let endpoint = '/api/createPost';
+    let basicPostBody = {
+      'postText': postInput,
+      'authorId': authorId
+    } 
 
-    var options = {
-      headers: {
+    let imagePostBody;
+
+    if (hasImage) {
+      endpoint='/api/uploadImagePost';
+
+      // Define Post body
+
+      imagePostBody = new FormData();
+      imagePostBody.append('sharedImage', this.state.accepted[0]);
+      imagePostBody.append('postText', postInput);
+      imagePostBody.append('authorId', authorId);
+
+      // let imageName = this.state.accepted[0].name;
+      let contentType =  this.state.accepted[0].type;
+
+      // console.log('image name', imageName);
+      // console.log('content type name', contentType);
+      let options = {
+        headers: {
           'Content-Type': contentType
+        }
       }
-    }
+    } 
 
-    axios.post('/api/uploadImage', image, options)
-    .then(function (result) {
-      console.log(result);
-      //var signedUrl = result.data.signedUrl;
-      
-      // var options = {
-      //   headers: {
-      //     'Content-Type': file.type
-      //   }
-      // };
-
-      // return axios.put(signedUrl, file, options);
-    })
-    // .then(function (result) {
-    //   console.log(result);
-    // })
-    .catch(function (err) {
-      console.log(err);
-    });
+    axios.post(endpoint, hasImage ? imagePostBody : basicPostBody, hasImage && options)
+      .then(function (result) {
+        console.log(result);
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
   }
-
 
   createPost() {
     let postInput = document.getElementById('postInput').value.replace(`'`, `''`);
@@ -77,6 +91,7 @@ class CreatePost extends React.Component {
     //     console.error(err);
     //   });
   }
+
   sendPostText(event) {
     event.preventDefault();
   }
@@ -105,14 +120,16 @@ class CreatePost extends React.Component {
             </aside>
             <Input 
               className="createPostInput"
-              id="postInput"
               type="text" 
+              onChange={this.handlePostInput.bind(this)}
             />
             <div className="createPostButtonRow">
-              <div></div>
-              <div></div>
-              <Button className="createPostButton" onClick={this.createPost.bind(this)}>Post</Button>
-              <Button className="cancelPostButton">Cancel</Button>
+              <Button 
+                className="createPostButton"
+                onClick={this.createPostNew.bind(this)}>
+                Post
+              </Button>
+              {/*<Button className="cancelPostButton">Cancel</Button>*/}
             </div>
           </form>
         </Card>

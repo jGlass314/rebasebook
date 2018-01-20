@@ -62,6 +62,7 @@ module.exports = {
       }  
     });
   },
+
   createPost: (username, text, callback) => {
     let queryStr =
       `INSERT INTO posts (post_text, user_id)
@@ -74,6 +75,7 @@ module.exports = {
       }
     });
   },
+
   likePost: (author, text, username, callback) => {
     let queryStr = 
     `INSERT INTO user_posts_liked (user_id, post_id) 
@@ -628,6 +630,21 @@ module.exports = {
     return pg('messages')
       .where({'chatId': chatId})
       .limit(50);
+  },
+
+  createPostG: (userId, text, imageUrl) => {
+    let newPostToAdd = {
+      user_id: userId,
+      post_text: text
+    };
+
+    if (imageUrl) {
+      newPostToAdd.post_image_url = imageUrl;
+    };
+
+    return pg.insert(newPostToAdd)
+      .into('posts')
+      .returning('id');
   },
 
   getPostByAuthorId: (authorId) => {

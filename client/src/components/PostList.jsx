@@ -27,6 +27,7 @@ class PostList extends React.Component {
         <CreatePost 
           onClick={this.receivePostText.bind(this)}
           getAllPosts={this.getAllPosts.bind(this)}
+          userId={this.props.userId}
           name={this.props.name} />
         <br />
         {
