@@ -55,13 +55,12 @@ class SignIn extends React.Component {
     this.setState({
       undefinedUsername: false,
       undefinedPassword: false,
-      usernameError: false,
     })
   }
 
   logUserIn(username, password) {
     this.resetErrors();
-
+    this.setState({username: username, password: password})
     $.post(`/login`, {username: username, password: password}, (data) => {
       // If user successfully logs in
       if (data.length) {

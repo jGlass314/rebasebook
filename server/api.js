@@ -83,6 +83,7 @@ const api = {
       if (username !== 'favicon.ico') {
         var newUserData = {
           username: req.body.username,
+          password: req.body.password,
           pictureUrl: req.body.pictureUrl,
           firstName: req.body.firstName,
           lastName: req.body.lastName
@@ -91,7 +92,7 @@ const api = {
           if (err) {
             res.status(500).json(err);
           } else {
-            db.addNewUserProfileInfo(newUserData.username, (err, data) => { // line 230
+            db.addNewUserProfileInfo(newUserData, (err, data) => { // line 230
               if (err) {
                 res.status(404).send(err);
               } else {
