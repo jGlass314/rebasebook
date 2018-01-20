@@ -23,15 +23,18 @@ class Header extends React.Component {
       : <Icon disabled name='users' />
 
     return (
-      <div className="global-header">
-        {this.props.signedIn && 
-          <div>
-            <Image className="logo" src="/images/rbooktransparent.png"></Image>
-            <SearchBar 
-              className="searchBarClass"
-              loggedInUser={this.props.name}/>
-            <div className="header-btn">
-              <span className='friend-requests'>
+      <span>
+        {!this.props.signedIn 
+        ? <div className="navbar"></div>
+        : <div className='navbar navbar--loggedIn'>
+            <div className='navbar-searchLogoContainer'>
+              <Image className="navbar-logo" src="/images/rbooktransparent.png"></Image>
+              <SearchBar 
+                className="navbar-searchBar"
+                loggedInUser={this.props.name}/>
+            </div>
+            <div className="navbar-menuItemsContainer">
+              <div className='navbar-menuItems navbar-menuItems--icon friend-requests'>
                 <Popup 
                   trigger={icon}
                   content={<FriendRequestList 
@@ -42,29 +45,30 @@ class Header extends React.Component {
                   on='click'
                   position='bottom center'
                 />
-              </span>
+              </div>
               <Link
+                className='navbar-menuItems navbar-menuItems--text'
                 onClick={ () => this.props.updateLoginState(false) }
                 to='/'>
-                <button className="btn">
-                  <span className="headerFont">Log Out</span>
-                </button>
+                Log Out
               </Link>
-              <Link to={profilePath}>
-                <button className="btn">
-                  <span className="headerFont">Profile</span>
-                </button>
+              <Link 
+                className='navbar-menuItems navbar-menuItems--text'
+                to={profilePath}>
+                Profile
               </Link>
-              <Link to={feedPath}>
-                <button className="btn">
-                  <span className="headerFont">Feed</span>
-                </button>
+              <Link 
+                className='navbar-menuItems navbar-menuItems--text'
+                to={feedPath}>
+                Feed
               </Link>
-              <ChatWindow userId={this.props.userId} username={this.props.name} />
+              <ChatWindow 
+                className='navbar-menuItems navbar-menuItems--icon' 
+                userId={this.props.userId} username={this.props.name} />
             </div>
           </div>
         }
-      </div>
+      </span>
     );
   }
 }

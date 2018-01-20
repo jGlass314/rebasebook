@@ -2,9 +2,101 @@ body {
   background: #F2F2F2 !important;
 }
 
+/******************************************** NAVBAR WITH FLEX ******************************************************/
+
+/* Structure */ 
+
+.navbar, .navbar--loggedIn {
+  background-color: #3F5FA4;
+  font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
+  font-size: 15px;
+
+  /* structure */
+  height: 65px;
+  margin-bottom: 20px;
+
+  display: flex;
+  flex-direction: row; /* DEFAULT, do not need. Other options are column, row-reverse, column-reverse */
+  flex-wrap: nowrap; /* DEFAULT, do not need. Other options are wrap, wrap-reverse */
+}
+
+.navbar-searchLogoContainer {
+  /* searchContainer is a child of a flex parent (navbar-loggedIN). 
+  This controls the child-behavior */
+  flex-basis: 70%;
+  padding-left: 10%;
+
+  /* searchContainer is also a parent of flex-children.
+  here are the parent settings */
+
+  display: flex;
+  flex-direction: row;  /* DEFAULT, do not need. */
+  flex-wrap: nowrap; /* DEFAULT, do not need. */
+  align-items: center;
+
+}
+
+.navbar-menuItemsContainer {
+    /* searchContainer is a child of a flex parent (navbar-loggedIN). 
+  This controls the child-behavior */
+  flex-basis: 30%;
+  
+
+  /* searchContainer is also a parent of flex-children.
+  here are the parent settings */
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; /* vertical alignment within container */
+  flex-direction: row;  /* DEFAULT, do not need. */
+  flex-wrap: nowrap; /* DEFAULT, do not need. */
+
+}
+
+/* Styling for individual items */ 
+
+.navbar-menuItems {
+
+
+}
+
+.navbar-logo {
+  height: 30px;
+  width: 30px;  
+  border-radius: 1px;
+}
+
+.navbar-menuItems--text {
+  width: 70px;
+  height: 35px;
+  color: white;
+  background: transparent;
+  border-style: none;
+  cursor: pointer;
+}
+
+.navbar-menuItems--text:hover {
+  background-color: #365899;
+  color: white;
+}
+
+.navbar-menuItems--icons {
+
+}
+
+
+
+
 /******************************************** Search / Header Component ******************************************************/
 
-.ui.icon.input {
+.global-header {
+  height: 65px;
+  background-color: #3F5FA4;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+
+/*.ui.icon.input {
   height: 28px !important;
   margin-top: 17.25px;
 }
@@ -12,7 +104,7 @@ body {
 .ui.grid {
   width: 630px !important;
   margin-right: 0px !important;
-}
+}*/
 
 .search-input {
   width: 220px !important;
@@ -43,12 +135,7 @@ body {
   float: right;
   margin-top: 20px;
 }
-.global-header {
-  height: 65px;
-  background-color: #3F5FA4;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
-}
+
 
 .header-btn {
   margin-right: 140px;
@@ -80,6 +167,8 @@ body {
   font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
   font-size: 15px;
 }
+
+
 
 /******************************************** Profile Component ******************************************************/
 

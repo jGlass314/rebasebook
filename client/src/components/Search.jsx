@@ -80,7 +80,6 @@ class SearchBar extends Component {
       return (
       <div>
         <Grid>
-          <div className="search-bar">
             <Search
               loading={isLoading}
               onResultSelect={this.handleResultSelect.bind(this)}
@@ -90,7 +89,6 @@ class SearchBar extends Component {
               className="search-input"
               // {...this.props}
             />
-          </div>
         </Grid>
         <Redirect to={profileUrl} />
       </div>
@@ -100,7 +98,6 @@ class SearchBar extends Component {
 
     return (
       <Grid>
-        <div className="search-bar">
           <Search
             loading={isLoading}
             onResultSelect={this.handleResultSelect.bind(this)}
@@ -110,7 +107,6 @@ class SearchBar extends Component {
             className="search-input"
             // {...this.props}
           />
-        </div>
       </Grid>
     )
   }
