@@ -1,7 +1,46 @@
 const route = require('express').Router();
 const db = require('../database-posgtres/index.js');
 const passport = require ('passport');
+const multer  = require('multer');
+const aws = require('aws-sdk');
+const md5 = require('md5');
+const moment = require('moment');
 
+// Set up S3 
+var s3 = new aws.S3({
+  accessKeyId: process.env.S3_KEY,
+  secretAccessKey: process.env.S3_SECRET,
+  region: 'us-west-2'
+})
+
+var grabImage = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 52428800 },
+});
+
+
+
+let uploadImage = function(image) {
+  let originalFileName = image.originalname;
+  // Make unique filename with timestamp
+  let timestamp = moment().format();
+  let hash = md5(originalFileName + timestamp).substring(0, 10);
+  let fileNameWithHash = hash + '-' + originalFileName;
+
+  let params = {
+    Bucket: 'rebasebook/images',
+    ContentType: image.mimetype,
+    Key: fileNameWithHash,
+    Body: image.buffer
+  };
+
+  return s3.putObject(params).promise()
+  .then(result => {
+    return `https://rebasebook.s3.amazonaws.com/images/${fileNameWithHash}`;
+  })
+}
+
+// ---- 
 
 const api = {
 
@@ -165,7 +204,7 @@ const api = {
         })
         .catch((err) => {
           console.error('addfriendship err:', err);
-          res.status(500).json('unexpected server errror');
+          res.status(500).json('unexpected server error');
         });
     },
 
@@ -186,7 +225,7 @@ const api = {
         })
         .catch((err) => {
           console.error(err);
-          res.status(500).json('unexpected server errror');
+          res.status(500).json('unexpected server error');
         });
 
     },
@@ -213,14 +252,14 @@ const api = {
 
             if (friendshipStatus === undefined) {
               // This should not occur. Send server error and capture edge cases.
-              res.status(500).json('unexpected server errror');
+              res.status(500).json('unexpected server error');
             } else {
               res.status(200).json({'friendship_status': friendshipStatus});
             }
           })
           .catch((err) => {
             console.error(err);
-            res.status(500).json('unexpected server errror');
+            res.status(500).json('unexpected server error');
           }); 
       }
     },
@@ -233,18 +272,20 @@ const api = {
 
       let userId = parseInt(req.query.userId);
       let type = req.query.type === 'requests' ? 'request' : 'friend';
+
       if (!userId) {
         res.status(400).json('bad request');
+      } else {
+        db.returnFriendships(userId, type)
+          .then((results) => {
+            res.status(200).json(results);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json('unexpected server error');
+          });  
       }
 
-      db.returnFriendships(userId, type)
-        .then((results) => {
-          res.status(200).json(results);
-        })
-        .catch((err) => {
-          console.error(err);
-          res.status(500).json('unexpected server errror');
-        })
     }
   },
 
@@ -272,6 +313,47 @@ const api = {
           res.status(200).json(data);
         }
       })
+    },
+
+    createPostNonImage: function(req, res) {
+      let userId = parseInt(req.body.authorId);
+      let postText = req.body.postText;
+
+
+      if (!userId) {
+        res.status(400).json('bad request');
+      } else {
+        db.createPostById(userId, postText)
+          .then((post_id) => {
+            res.status(200).json({"post_id": post_id})
+          })
+          .catch((err) => {
+            console.error('error creating post', err);
+            res.status(500).json('unexpected server error');
+          });
+      }
+    },
+
+    createPostImage: function(req, res) {
+      let userId = parseInt(req.body.authorId);
+      let postText = req.body.postText || null;
+
+      if (!userId || !req.file || !req.file.fieldname === 'sharedImage') {
+        res.status(400).json('bad request');
+      } else {
+        uploadImage(req.file)
+          .then((url) => {
+            return db.createPostById(userId, postText, url)
+              .then((post_id) => {
+                res.status(200).json({"post_id": post_id})
+              })
+            
+          })
+          .catch((err) => {
+            console.error('error creating image post', err);
+            res.sendStatus(500).json('unexpected server error');
+          })    
+      }
     },
 
     getAuthor: function(req, res) {
@@ -350,6 +432,24 @@ const api = {
 
   posts: {
 
+    getPostsByAuthorId: function(req, res) {
+      let authorId = req.params.authorId;
+
+      if (!authorId) {
+        res.status(400).json('bad request');
+      } else {
+        db.getPostByAuthorId(authorId)
+          .then((results) => {
+            res.status(200).json(results);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json('unexpected server error');
+          })    
+      }
+
+    },
+
     getPosts: function (req, res) {
       db.getAllPosts((err, data) => {
         if (err) {
@@ -393,10 +493,49 @@ const api = {
           res.status(200).json(data);
         }
       })
+    },
+
+    getFeed: function(req, res) {
+      // Main Feed currently returns posts by Friends Only
+      let userId = parseInt(req.query.userId);
+      let friendsOnly = req.query.type === 'friends';
+
+      if (!userId) {
+        res.status(400).json('bad request');
+        return;
+      }
+
+      if (friendsOnly) {
+        db.getPostsFromFriends(userId)
+          .then((results) => {
+            res.status(200).json(results);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json('unexpected server error');
+          })    
+      } else {
+        db.getAllPosts()
+          .then((results) => {
+            res.status(200).json(results);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json('unexpected server error');
+          }) 
+      }
     }
   }
 };
 
+
+// POSTS NEW
+route.post('/uploadImagePost', grabImage.single('sharedImage'), api.post.createPostImage); // uploads image to CDN and returns URL
+route.post('/createPost', api.post.createPostNonImage);
+route.get('/posts/:authorId', api.posts.getPostsByAuthorId); // CG - gets posts by authorID
+route.get('/myFeed', api.posts.getFeed); // CG - gets the ideal logged in feed for a user 
+
+//USERS
 route.get('/search/users', api.users.getUsers); //get all users
 route.get('/likes', api.post.getNumLikes); // get number of likes
 route.post('/likes/:author', api.post.likePost); //like a post
@@ -410,6 +549,7 @@ route.get('/friend_list', api.user.getAllFriends);
 //CHATS
 route.get('/chats/:userId', api.chats.getChatSessions); //retrieve chat history of user
 route.get('/chat/:chatId', api.chat.getChatMessages); //retrieve messages from a chat session
+
 //USER
 // route.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),api.user.login); // varifies identity on login
 route.post('/friendship', api.user.addFriendship); // add a friendship between 2 users
@@ -418,26 +558,22 @@ route.get('/friendship', api.user.getFriendship); // returns the status of an ex
 route.get('/friend_list', api.user.getAllFriends); // returns a user's friends list, or if the type requests is sent, a friends-request list
 
 route.get('/:username/profilePage', api.user.getProfilePage); // get profilePage info for user
-route.get('/:username/friendsList/:otherUsername', api.user.getFriendsList); // get a friends friend list
+route.get('/:firstname/:lastname', api.user.getUsername); //gets the username of a user by first name, last name
+route.get('/likers', api.user.getLikers); // get all likers of a particular user
+
 route.get('/:username/likes', api.user.getLiked); //get liked users of user
 route.get('/:username/profile/:user', api.user.getProfile); //get profile of a specific user
 route.get('/:username', api.user.getUser); //gets a user
 
-route.post('/:username/addFriend/:friendToAdd', api.user.addFriend); //add friend to user
-route.post('/:username/removeFriend/:friendToRemove', api.user.removeFriend); //remove friend from user's friends list
-route.post('/:username', api.user.createUser); //creates a new user line 81
+route.post('/:username', api.user.createUser); //creates a new user
 route.patch('/:username/updateProfile', api.user.updateProfile); //update current user's profile
 
-
-//USERS
 
 //POST
 route.get('/:username/post/author', api.post.getAuthor); // gets the auther of a post
 route.post('/:username/posts', api.post.createPost); // create new post
 
 //POSTS
-route.get('/:username/posts/friends', api.posts.getFriendsPosts); //get posts of all friends
-route.get('/:username/posts/nonFriends', api.posts.getNonFriendsPosts); //get posts of non friends
 route.get('/:username/posts', api.posts.getPosts); //get posts for the user
 route.get('/:username/posts/:certainUser', api.posts.getUserPosts); // get posts for a specified user
 

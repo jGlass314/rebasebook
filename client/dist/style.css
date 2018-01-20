@@ -544,6 +544,35 @@ textarea {
 .postText {
   padding-top: 1.5%;
 }
+
+.post-imageSelectContainer {
+  padding-top: 15px;
+  display: flex;
+  padding-left: 15px;
+  flex-wrap: wrap;
+}
+
+.post-imageSelect-aside {
+  flex-basis: 100%;
+}
+.post-imageSelect {
+  text-align: center;
+  width: 150px;
+  height: 150px;
+  border-width: 2px;
+  border-color: rgb(102, 102, 102);
+  border-style: dashed;
+  border-radius: 5px;
+}
+
+.post-imageSelect-accepted {
+  background-color: green;
+}
+
+.post-image {
+  max-height: 400px;
+  max-width: 400px;
+}
 .postButtonRow {
   padding-top: 1.25%;
 }

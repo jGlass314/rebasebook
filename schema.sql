@@ -11,7 +11,7 @@ CREATE TABLE users (
     password VARCHAR (25) NOT NULL,
     first_name VARCHAR (25),
     last_name VARCHAR (25),
-    picture_url VARCHAR(255)
+    picture_url VARCHAR (255)
 );
 
 INSERT INTO users (username, first_name, last_name, picture_url) VALUES ('mattupham', 'Matt', 'Upham', 'https://data.whicdn.com/images/14922648/large.jpg');
@@ -25,6 +25,7 @@ CREATE TABLE posts (
     id SERIAL PRIMARY KEY NOT NULL,
     user_id INTEGER REFERENCES users(id) NOT NULL,
     post_text VARCHAR (1000) NOT NULL,
+    post_image_url VARCHAR (255),
     post_timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -33,16 +34,6 @@ INSERT INTO posts (user_id, post_text) VALUES (2, 'albert chang post');
 INSERT INTO posts (user_id, post_text) VALUES (3, 'ryan ngo post');
 INSERT INTO posts (user_id, post_text) VALUES (4, 'kaitlyn menghini post');
 INSERT INTO posts (user_id, post_text) VALUES (5, 'shubhra jain post');
-
-DROP TABLE IF EXISTS user_friends CASCADE;
-CREATE TABLE user_friends (
-    id SERIAL PRIMARY KEY UNIQUE,
-    username VARCHAR(25) REFERENCES users(username) NOT NULL,
-    friend_id INTEGER REFERENCES users(id) NOT NULL
-);
-
-INSERT INTO user_friends (username, friend_id) VALUES ('mattupham', 2);
-INSERT INTO user_friends (username, friend_id) VALUES ('albertchanged', 1);
 
 DROP TABLE IF EXISTS users_friendships CASCADE;
 CREATE TABLE users_friendships (

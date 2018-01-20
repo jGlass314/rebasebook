@@ -62,6 +62,7 @@ module.exports = {
       }  
     });
   },
+
   createPost: (username, text, callback) => {
     let queryStr =
       `INSERT INTO posts (post_text, user_id)
@@ -74,6 +75,7 @@ module.exports = {
       }
     });
   },
+
   likePost: (author, text, username, callback) => {
     let queryStr = 
     `INSERT INTO user_posts_liked (user_id, post_id) 
@@ -112,7 +114,7 @@ module.exports = {
 
     let queryStr =
     `SELECT user_id FROM user_posts_liked WHERE post_id = 
-    (SELECT id FROM posts WHERE post_text = '${text}')`;
+    (SELECT id FROM posts WHERE post_text = '${text}' LIMIT 1)`;
     client.query(queryStr, (err, res) => {
       if (err) {
         callback(err, null);
@@ -257,6 +259,7 @@ module.exports = {
       }
     });
   },
+
   //add 2 rows to user_friends table
   addFriend: (username1, username2, callback) => {
     let queryStr = `INSERT INTO user_friends (username, friend_id)
@@ -331,6 +334,7 @@ module.exports = {
       }  
     });
   },
+
   getProfilePageInfo: (username, callback) => {
     var query = `SELECT * from user_profiles WHERE user_id = (SELECT id FROM users WHERE username = '${username}')`;
     client.query(query, (err, res) => {
@@ -625,5 +629,49 @@ module.exports = {
     return pg('messages')
       .where({'chatId': chatId})
       .limit(50);
+  },
+
+  createPostById: (userId, text, imageUrl) => {
+    let newPostToAdd = {
+      user_id: userId,
+      post_text: text
+    };
+
+    if (imageUrl) {
+      newPostToAdd.post_image_url = imageUrl;
+    };
+
+    return pg.insert(newPostToAdd)
+      .into('posts')
+      .returning('id');
+  },
+
+  getPostByAuthorId: (authorId) => {
+    return pg('posts')
+      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_image_url', 'post_timestamp')
+      .where({'user_id': authorId})
+      .innerJoin('users', 'posts.user_id', 'users.id')
+      .orderBy('post_id', 'desc');
+  },
+
+  getAllPosts: () => {
+    return pg('posts')
+      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_image_url', 'post_timestamp')
+      .innerJoin('users', 'posts.user_id', 'users.id')
+      .orderBy('post_id', 'desc');
+  },
+
+  getPostsFromFriends: (userId) => {
+    return pg('posts')
+      .select('posts.id as post_id', 'picture_url', 'username', 'first_name', 'last_name', 'user_id', 'post_text', 'post_image_url', 'post_timestamp')
+      .whereIn('user_id', function() {
+        this.select('users.id')
+          .from('users_friendships')
+          .innerJoin('users', 'users.id', 'users_friendships.user_id_to')
+          .where({'user_id_from': userId})
+          .where({'state': 'friend'})
+      })
+      .innerJoin('users', 'posts.user_id', 'users.id')
+      .orderBy('post_id', 'desc');
   }
 }
