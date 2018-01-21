@@ -89,7 +89,7 @@ body {
 
 /* override semantic bs */
 .search-input > .ui.icon.input input {
-  padding: 4px 0;
+  padding: 4px 10px;
 }
 
 
