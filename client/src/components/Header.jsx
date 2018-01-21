@@ -34,9 +34,9 @@ class Header extends React.Component {
                 loggedInUser={this.props.name}/>
             </div>
             <div className="navbar-menuItemsContainer">
-              <div className='navbar-menuItems navbar-menuItems--icon'>
+              {/* <div className='navbar-menuItems navbar-menuItems--icon'>
                 <NotificationsButton userId={this.props.userId} />
-              </div>
+              </div> */}
               <div className='navbar-menuItems navbar-menuItems--icon'>
                 <ChatWindow 
                   userId={this.props.userId}

@@ -540,9 +540,6 @@ module.exports = {
             }
           })
 
-          // TODO: Implement socket.io updating requestee's notifications so that their counter will drop.
-          
-          
           .then(() => {
           // If userId is undoing their friend request
           // delete that friend request
@@ -555,6 +552,8 @@ module.exports = {
           })
 
         } else if (results === 'friends') {
+
+// TODO: Must delete from notifications or change FK relationship!!!
 
           // For existing friendships, delete the users friendship
           // And change the friend's friend entry to a request
