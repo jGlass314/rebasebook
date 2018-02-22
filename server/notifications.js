@@ -1,6 +1,4 @@
 const notification = require('socket.io')();
-// const api = require('./api.js');
-// const db = require('../database-posgtres/index');
 
 const connections = {};
 
@@ -29,7 +27,7 @@ let init = io => {
 
 
 const sendNofications = (userId, notifications) => {
-  let socket = connections[userId].socket;
+  let socket = connections[userId] && connections[userId].socket;
   if(socket) {
     socket.emit('notifications', notifications);
   } else {

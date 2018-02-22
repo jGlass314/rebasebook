@@ -644,7 +644,8 @@ route.get('/:username/posts/:certainUser', api.posts.getUserPosts); // get posts
 
 route.get('/:firstname/:lastname', api.user.getUsername); //gets the username of a user by first name, last name
 
-module.exports = {
-  route: route,
-  api: api
-};
+module.exports = route;
+// module.exports = {
+//   route: route,
+//   api: api
+// };

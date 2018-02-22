@@ -46,9 +46,4 @@ const getOnlineUsers = function() {
   return Object.keys(connections);
 };
 
-module.exports = {
-  init: init
-  // getOnlineUsers: getOnlineUsers
-};
-
-
+module.exports = init;

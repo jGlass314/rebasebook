@@ -2,7 +2,7 @@ const express = require('express');
 let app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-require('./chat').init(io);
+require('./chat')(io);
 require('./notifications').init(io);
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -54,7 +54,8 @@ app.use(express.static(__dirname + '/../client/dist'));
 app.use('/:username', express.static(__dirname + '/../client/dist'));
 
 //handle /api endpoints
-app.use('/api', api.route);
+// app.use('/api', api.route);
+app.use('/api', api);
 
 
 let port = process.env.PORT || 3000;

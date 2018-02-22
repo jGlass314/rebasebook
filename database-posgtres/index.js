@@ -424,7 +424,7 @@ module.exports = {
                   .update({'state': 'friend'})
                   .into('users_friendships')
               })
-              // .then(trx.commit)
+              //.then(trx.commit)
               // add notification to requestor
               .then(() => {
                 return pg.select('id')
@@ -433,12 +433,14 @@ module.exports = {
                 .andWhere('user_id_from', friendId)
               })
               .then((rows) => {
+                console.log('ufid:', rows[0].id);
                 insertQueryInfo.usersFriendshipsId = rows[0].id;
                 return pg.insert({'user_id': friendId})
                 .into('notifications')
                 .returning('id')
               })
               .then(notificationsId => {
+                console.log('notificationsId[0]:', notificationsId[0]);
                 return pg.insert({
                   'notifications_id': notificationsId[0],
                   'friendships_id': insertQueryInfo.usersFriendshipsId,
@@ -557,25 +559,63 @@ module.exports = {
 
           // For existing friendships, delete the users friendship
           // And change the friend's friend entry to a request
-          return pg.transaction((trx) => {
-            pg('users_friendships')
-              .where('user_id_from', friendId)
-              .where('user_id_to', userId)
-              .where('state', 'friend')
-              .limit(1)
-              .update({'state': 'request'})
-              .transacting(trx)
-              .then((results) => {
-                return pg.where('user_id_to', friendId)
-                  .where('user_id_from', userId)
-                  .limit(1)
-                  .into('users_friendships')
-                  .del();
+          let notificationInfo = {};
+          return pg('users_friendships')
+            .select('id')
+            .where('user_id_from', friendId)
+            .andWhere('user_id_to', userId) 
+            .then(ufId => {
+              console.log('step 1');
+              notificationInfo.friendshipId = ufId[0].id;
+              console.log('notificationInfo.friendshipId',notificationInfo.friendshipId);
+              let subquery = pg('notifications_friendships')
+                .select('notifications_id as id');
+              return pg('notifications')
+                .select('id')
+                .where('user_id', userId)
+                .andWhere('id', 'in', subquery)
+            .then(nId => {
+              console.log('step 2');
+              notificationInfo.notificationId = nId[0].id;
+              console.log('notificationInfo.notificationId',notificationInfo.notificationId);
+              return pg('notifications_friendships')
+                .where('notifications_id', notificationInfo.notificationId)
+                .andWhere('friendships_id', notificationInfo.friendshipId)
+                .limit(1)
+                .del()
               })
-              .then(trx.commit)
-              .catch(trx.rollback);
-          })
-        }
+            .then((rowCountDeleted) => {
+              console.log('step 3,', rowCountDeleted, 'rows deleted');
+              return pg('notifications')
+                .where('id', notificationInfo.notificationId)
+                .limit(1)
+                .del()
+            })
+            .then((rowCountDeleted) => {
+              console.log('step 4,', rowCountDeleted, 'rows deleted');
+              pg.transaction((trx) => {
+                pg('users_friendships')
+                  .where('user_id_from', friendId)
+                  .where('user_id_to', userId)
+                  .where('state', 'friend')
+                  .limit(1)
+                  .update({'state': 'request'})
+                  .transacting(trx)
+                  .then((results) => {
+                    console.log('results of update:', results);
+                    console.log('step 5');
+                    return pg.where('user_id_to', friendId)
+                      .where('user_id_from', userId)
+                      .limit(1)
+                      .into('users_friendships')
+                      .del();
+                  })
+                  .then(trx.commit)
+                  .catch(trx.rollback);
+                })
+              })
+            })
+        } // end else
       });
   },
 
@@ -751,11 +791,6 @@ module.exports = {
       .orderBy('post_id', 'desc');
   },
   
-  getChatMessages: (chatId) => {
-    return pg('messages')
-      .where({'chatId': chatId})
-      .limit(50);
-  },
   getNotifications: (userId) => {
     return pg.column(
       {id: 'notifications.id'},
